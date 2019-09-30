@@ -95,6 +95,7 @@ let nameStrings = [
   ["Chris", "Ewen"],
   ["Chris", "Lee"],
   ["Chris", "Seltzer"],
+  ["Chrissy", "Oliver"],
   ["Cindy", "Zhang"],
   ["Claire", "Cipriani"],
   ["Cory", "Perkins"],
@@ -169,6 +170,8 @@ let nameStrings = [
   ["Jamal", "Carvalho"],
   ["James", "Chen"],
   ["James", "Manlapid"],
+  ["Jane", "Calvin"],
+  ["Jane", "Wang"],
   ["Jared", "Lindauer"],
   ["Jason", "Byck"],
   ["Jason", "LaCarrubba"],
@@ -233,6 +236,7 @@ let nameStrings = [
   ["Leilah", "Williams"],
   ["Leo", "Yu"],
   ["Lihui", "Cai"],
+  ["Lindsay", "Owen"],
   ["Lucas", "Lain"],
   ["Lucas", "Reis"],
   ["Lucy", "Zhong"],
@@ -297,6 +301,7 @@ let nameStrings = [
   ["Ran", "Ding"],
   ["Raquel", "Bujans"],
   ["Raymond", "Leung"],
+  ["Raymond", "Wang"],
   ["Renato", "Gamboa"],
   ["Revathi", "Kandoji"],
   ["Rex", "Zhang"],
@@ -420,7 +425,7 @@ let nameStrings = [
   ["Zhouqian", "Ma"],
   ["Zhuoyuan", "Zhang"],
   ["Zikang", "Yao"],
-  ["Zvi", "Band"],
+  ["Zvi", "Band"]
 ];
 
 let nameIndex = {};
