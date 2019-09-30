@@ -8,7 +8,7 @@
 
 # 4. Which "magic" people have a first name that is someone's last name, and a last name that is someone's first name?
 
-# 5. People are in a group if their names are connected in some way. For example, Landin King, Roger King, and Roger Geng are in a group of 3 people. Print the number of groups of each size. For example, there are 11 groups of 3 people and 1 group of 11 people.
+# 5. People are in a group if their names are connected in some way. For example, Landin King, Roger King, and Roger Geng are in a group of 3 people. Print the number of groups of each size.
 
 # 6. Do the results change if you add your name to the list?
 
@@ -172,6 +172,7 @@ nameStrings = [
   ["James", "Manlapid"],
   ["Jane", "Calvin"],
   ["Jane", "Wang"],
+  ["Jane", "Wang"],
   ["Jared", "Lindauer"],
   ["Jason", "Byck"],
   ["Jason", "LaCarrubba"],
@@ -297,6 +298,7 @@ nameStrings = [
   ["Preetpal", "Phandar"],
   ["Raghav", "Sachdev"],
   ["Rahul", "Singh"],
+  ["Rahul", "Ratnakar"],
   ["Raju", "Matta"],
   ["Ran", "Ding"],
   ["Raquel", "Bujans"],
