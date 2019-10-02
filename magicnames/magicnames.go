@@ -438,7 +438,7 @@ func main() {
     {"Zvi", "Band"}}
 
   nameIndex = make(map[string]*Name)
-  people = make([]*Person, 0)
+  people = []*Person{}
   
   for _, strings := range nameStrings {
     first := nameIndex[strings[0]]
@@ -457,30 +457,34 @@ func main() {
     people = append(people, person)
   }
   
-  names := make([]*Name, 0)
+  names := []*Name{}
   for _, name := range nameIndex {
     names = append(names, name)
   }
   
   print("\nTop first names:\n");
+  firstNames := []*Name{} // TODO: find top first names
   sort.Slice(names, func(i, j int) bool {
     return len(names[i].firsts) > len(names[j].firsts)
   })
-  for _, name := range names[0:5] {
+  firstNames = names[0:5]
+  for _, name := range firstNames {
     print(name.value + " - " + name.FirstNames() + "\n")
   }
   
   print("\nTop last names:\n");
+  lastNames := []*Name{} // TODO: find top last names
   sort.Slice(names, func(i, j int) bool {
     return len(names[i].lasts) > len(names[j].lasts)
   })
-  for _, name := range names[0:5] {
+  lastNames = names[0:5]
+  for _, name := range lastNames {
     print(name.value + " - " + name.LastNames() + "\n")
   }
 
   print("\nMagic names:\n");
   for _, name := range names {
-    if len(name.firsts) > 0 && len(name.lasts) > 0 {
+    if name.IsMagic() {
       print(name.value + " - " + 
             name.FirstNames() + "/ " + 
             name.LastNames() + "\n")      
@@ -489,13 +493,13 @@ func main() {
 
   print("\nMagic people:\n");
   for _, person := range people {
-    if len(person.first.lasts) > 0 && len(person.last.firsts) > 0 {
+    if person.IsMagic() {
       print(person.first.value + " " + person.last.value + "\n")
     }
   }
 
   print("\nCluster sizes:\n");
-  clusterSizes := make(map[int]int)
+  clusterSizes := make(map[int]int) // TODO: update clusterSizes
   for _, name := range names {
     if !name.visited {
       count := name.CountName()
@@ -518,6 +522,16 @@ type Person struct {
   first *Name
   last *Name
   visited bool
+}
+
+func (p *Person) IsMagic() bool {
+  // return false // TODO: implement
+  return len(p.first.lasts) > 0 && len(p.last.firsts) > 0
+}
+
+func (n *Name) IsMagic() bool {
+  // return false // TODO: implement
+  return len(n.firsts) > 0 && len(n.lasts) > 0
 }
 
 func (n *Name) FirstNames() string {
