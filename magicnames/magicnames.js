@@ -430,18 +430,11 @@ let nameStrings = [
   ["Zvi", "Band"]
 ];
 
-let nameIndex = {};
 let people = [];
+let names = [];
+let nameIndex = {};
 
-function getName(value) {
-  let name = nameIndex[value];
-  if (!name) {
-    name = {name: value, firsts: [], lasts: []};
-    nameIndex[value] = name;
-  }
-  return name;
-}
-
+// builds the graph network for people and names
 for (let strings of nameStrings) {
   let first = getName(strings[0]);
   let last = getName(strings[1]);
@@ -450,43 +443,42 @@ for (let strings of nameStrings) {
   last.lasts.push(person);
   people.push(person);  
 }
+names = Object.values(nameIndex);
 
-let names = Object.values(nameIndex);
-
-function firstNames(name) {
-  return name.lasts.map(person => person.first.name).join(', ');
-}
-
-function lastNames(name) {
-  return name.firsts.map(person => person.last.name).join(', ');
-}
-
-console.log('\nTop first names:');
-names.sort((a,b) => {
+console.log('Top first names:');
+names.filter((name) => {
+  return true; // TODO: find top first names
+}).sort((a,b) => {
   return b.firsts.length - a.firsts.length;
 }).slice(0,5).forEach(name => {
-  console.log(name.name,'-',lastNames(name));
+  console.log(name.name ,'-', getLastNames(name));
 });
 
 console.log('\nTop last names:');
-names.sort((a,b) => {
+names.filter((name) => {
+  return true; // TODO: find top last names
+}).sort((a,b) => {
   return b.lasts.length - a.lasts.length;
 }).slice(0,5).forEach(name => {
-  console.log(name.name,'-',firstNames(name));
+  console.log(name.name, '-', getFirstNames(name));
 });
 
 console.log('\nMagic names:');
 names.filter((name) => {
+  return true; // TODO: find magic names
+}).filter((name) => {
   return name.firsts.length && name.lasts.length;
 }).sort((a,b) => {
   return (b.firsts.length + b.lasts.length) - 
          (a.firsts.length + a.lasts.length);
 }).forEach(name => {
-  console.log(name.name,'-',firstNames(name),'/',lastNames(name));
+  console.log(name.name, '-', getFirstNames(name), '/', getLastNames(name));
 });
 
 console.log('\nMagic people:');
 people.filter((person) => {
+  return true; // TODO: find magic people
+}).filter((person) => {
   return person.first.lasts.length && person.last.firsts.length;
 }).forEach(person => {
   console.log(person.first.name, person.last.name);
@@ -494,6 +486,7 @@ people.filter((person) => {
 
 console.log('\nCluster sizes:');
 let clusterSizes = {};
+// TODO: update clusterSizes
 names.forEach((name) => {
   if (!name.visited) {
     let count = countName(name);
@@ -514,4 +507,29 @@ function countName(name) {
     }
   });
   return count;
-} 
+}
+
+// TODO: add your name to the list and see if the results change!
+
+// gets the name with the given value,
+// or creates a new one if it wasn't found
+function getName(value) {
+  let name = nameIndex[value];
+  if (!name) {
+    name = {name: value, firsts: [], lasts: []};
+    nameIndex[value] = name;
+  }
+  return name;
+}
+
+// returns a string with the first names of everyone
+// who has the given name as their last name
+function getFirstNames(name) {
+  return name.lasts.map(person => person.first.name).join(', ');
+}
+
+// returns a string with the last names of everyone
+// who has the given name as their first name
+function getLastNames(name) {
+  return name.firsts.map(person => person.last.name).join(', ');
+}

@@ -438,7 +438,9 @@ class Solution {
   
   public static void main(String[] args) {
     ArrayList<Person> people = new ArrayList<>();
+    ArrayList<Name> names;
     
+    // builds the graph network for people and names
     for (int i = 0; i < nameStrings.length; i++) {
       Name first = Name.getName(nameStrings[i][0]);
       Name last = Name.getName(nameStrings[i][1]);
@@ -447,11 +449,11 @@ class Solution {
       last.lasts.add(person);
       people.add(person);
     }
-    
-    ArrayList<Name> names = new ArrayList<Name>(Name.nameIndex.values());
+    names = new ArrayList<Name>(Name.nameIndex.values());
 
-    System.out.println("\nTop first names:");
+    System.out.println("Top first names:");
     names.stream()
+      // .filter((name) -> false) // TODO: find top first names
       .sorted((Name n1, Name n2) -> 
         n2.firsts.size() - n1.firsts.size())
       .limit(5)
@@ -460,6 +462,7 @@ class Solution {
 
     System.out.println("\nTop last names:");
     names.stream()
+      // .filter((name) -> false) // TODO: find top last names
       .sorted((Name n1, Name n2) -> 
         n2.lasts.size() - n1.lasts.size())
       .limit(5)
@@ -468,6 +471,7 @@ class Solution {
    
     System.out.println("\nMagic names:");
     names.stream()
+      // .filter((name) -> false) // TODO: find magic names
       .filter(name -> 
         name.firsts.size() > 0 && name.lasts.size() > 0)
       .sorted((Name n1, Name n2) -> 
@@ -479,6 +483,7 @@ class Solution {
 
     System.out.println("\nMagic people:");
     people.stream()
+      // .filter((name) -> false) // TODO: find magic people
       .filter(person -> 
         person.first.lasts.size() > 0 && 
         person.last.firsts.size() > 0)
@@ -488,6 +493,7 @@ class Solution {
     
     System.out.println("\nCluster sizes:");
     HashMap<Integer,Integer> clusterSizes = new HashMap<>();
+    // TODO: find cluster sizes
     names.stream()
       .filter(name -> !name.visited)
       .forEach(name -> {
@@ -570,4 +576,3 @@ class Person {
     this.visited = false;
   }
 }
-
