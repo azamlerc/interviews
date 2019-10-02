@@ -547,8 +547,7 @@ print("\nCluster sizes:")
 var clusterSizes = [Int:Int]() // TODO: update clusterSizes
 names.forEach { name in
   if !name.visited {
-    let count = name.countPeople()
-    clusterSizes[count] = (clusterSizes[count] ?? 0) + 1
+    clusterSizes[name.countPeople(), default: 0] += 1
   }
 }
 
