@@ -127,6 +127,7 @@ class Solution {
     {"DiXi", "Qiao"},
     {"Djam", "Saidmuradov"},
     {"Don", "Hoang"},
+    {"Donald", "Gray"},
     {"Dorian", "Manning"},
     {"Drew", "Libin"},
     {"Eda", "Kaplan"},
