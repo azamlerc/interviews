@@ -506,27 +506,32 @@ Person.loadPeople(nameStrings)
 
 var names = Array(Name.nameIndex.values)
 
-print("\nTop first names:")
-names.sorted(by:{ $0.firsts.count > $1.firsts.count })[0...4]
-  .forEach({ print($0.name,"-",$0.lastNames()) });
+print("Top first names:")
+var firstNames = [Name]() // TODO: find top first names
+firstNames = names.sorted(by:{ $0.firsts.count > $1.firsts.count })
+firstNames = Array(firstNames[0...4])
+firstNames.forEach({ print($0.name,"-",$0.lastNames()) });
 
 print("\nTop last names:")
-names.sorted(by:{ $0.lasts.count > $1.lasts.count })[0...4]
-  .forEach({ print($0.name,"-",$0.firstNames()) });
+var lastNames = [Name]() // TODO: find top first names
+lastNames = names.sorted(by:{ $0.lasts.count > $1.lasts.count })
+lastNames = Array(lastNames[0...4])
+lastNames.forEach({ print($0.name,"-",$0.firstNames()) });
 
 print("\nMagic names:")
-names.filter({ $0.firsts.count > 0 && $0.lasts.count > 0 })
+var magicNames = [Name]() // TODO: find magic names
+magicNames = names.filter({ $0.firsts.count > 0 && $0.lasts.count > 0 })
   .sorted(by:{ $0.firsts.count + $0.lasts.count > 
                $1.firsts.count + $1.lasts.count })
-  .forEach({ print($0.name,"-",$0.firstNames(),"/",$0.lastNames()) })
+magicNames.forEach({ print($0.name,"-",$0.firstNames(),"/",$0.lastNames()) })
 
 print("\nMagic people:")
-Person.people.filter({ $0.first.lasts.count > 0 &&                                        $0.last.firsts.count > 0 })
-  .forEach({ print($0.first.name, $0.last.name) })
+var magicPeople = [Person]() // TODO: find magic people
+magicPeople = Person.people.filter({ $0.first.lasts.count > 0 && $0.last.firsts.count > 0 })
+magicPeople.forEach({ print($0.first.name, $0.last.name) })
 
 print("\nCluster sizes:")
-var clusterSizes = [Int:Int]()
-
+var clusterSizes = [Int:Int]() // TODO: update clusterSizes
 names.forEach({ name in
   if !name.visited {
     let count = name.countPeople()

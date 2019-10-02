@@ -14,6 +14,8 @@
 
 # Diagram: https://andrewzc.net/interviews/names.pdf
 
+from collections import defaultdict
+
 nameStrings = [
   ["Aaron", "Wilson"],
   ["Abhishek", "Sarihan"],
@@ -431,12 +433,9 @@ nameStrings = [
   ["Zvi", "Band"]
 ]
 
-nameIndex = {}
-people = []
-
 class Name:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self):
+        self.name = ""
         self.firsts = []
         self.lasts = []
         self.visited = False
@@ -470,14 +469,6 @@ class Name:
                     person.last.countPeople())
         return count
     
-def getName(value):
-    if value in nameIndex:
-        return nameIndex[value]
-    else:
-        name = Name(value)
-        nameIndex[value] = name
-        return name
-
 class Person:
     def __init__(self, first, last):
         self.first = first
@@ -494,9 +485,14 @@ class Person:
         return (self.first.numLasts() > 0 and 
                 self.last.numFirsts() > 0)
 
+nameIndex = defaultdict(Name)
+people = []
+
 for strings in nameStrings:
-    first = getName(strings[0])
-    last = getName(strings[1])
+    first = nameIndex[strings[0]]
+    last = nameIndex[strings[1]]
+    first.name = strings[0]
+    last.name = strings[1]
     person = Person(first, last)    
     first.firsts.append(person)
     last.lasts.append(person)
@@ -504,37 +500,44 @@ for strings in nameStrings:
     
 names = list(nameIndex.values())
 
-print("\nTop first names:")
+print("Top first names:")
+firstNames = []
+# TODO: find top first names
 names.sort(reverse=True, key=Name.numFirsts)
-for name in names[0:5]:
+firstNames = names[0:5]
+for name in firstNames:
     print(name.name, "-", name.lastNames())
 
 print("\nTop last names:")
+lastNames = []
+# TODO: find top first names
 names.sort(reverse=True, key=Name.numLasts)
-for name in names[0:5]:
+lastNames = names[0:5]
+for name in lastNames:
     print(name.name, "-", name.firstNames())
 
 print("\nMagic names:")
+magicNames = [];
+# TODO: find magic names
 magicNames = list(filter(Name.isMagic, names))
 magicNames.sort(reverse=True, key=Name.total)
 for name in magicNames:
     print(name.name,"-",name.firstNames(),"/",name.lastNames())
 
 print("\nMagic people:")
+magicPeople = [];
+# TODO: find magic people
 magicPeople = filter(Person.isMagic, people)
 for person in magicPeople:
     print(person.first.name, person.last.name)
 
 print("\nCluster sizes:")
-clusterSizes = {}
-
+clusterSizes = defaultdict(int)
+# TODO: update clusterSizes
 for name in names:
     if not name.visited:
         count = name.countPeople()
-        if count in clusterSizes:
-            clusterSizes[count] = clusterSizes[count] + 1
-        else:
-            clusterSizes[count] = 1
+        clusterSizes[count] += 1
 
 for cluster in sorted(clusterSizes.keys(), reverse=True):
     print(cluster,"-",clusterSizes[cluster])
