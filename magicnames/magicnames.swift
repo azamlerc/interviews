@@ -463,6 +463,14 @@ class Name {
     return firsts.map {$0.last.name}.joined(separator: ", ")
   }
 
+  func isMagic() -> Bool {
+    return firsts.count > 0 && lasts.count > 0
+  }
+
+  func totalCount() -> Int {
+    return firsts.count + lasts.count
+  }
+
   func countPeople() -> Int {
     var count = 0
     visited = true
@@ -500,6 +508,10 @@ class Person {
       people.append(person)
     }
   }
+
+  func isMagic() -> Bool {
+    return first.lasts.count > 0 && last.firsts.count > 0
+  }
 }
 
 Person.loadPeople(nameStrings)
@@ -520,14 +532,13 @@ lastNames.forEach { print($0.name,"-",$0.firstNames()) };
 
 print("\nMagic names:")
 var magicNames = [Name]() // TODO: find magic names
-magicNames = names.filter { $0.firsts.count > 0 && $0.lasts.count > 0 }
-  .sorted(by:{ $0.firsts.count + $0.lasts.count > 
-               $1.firsts.count + $1.lasts.count })
-magicNames.forEach { print($0.name,"-",$0.firstNames(),"/",$0.lastNames()) }
+magicNames = names.filter { $0.isMagic() }
+  .sorted(by:{ $0.totalCount() > $1.totalCount() })
+magicNames.forEach { print($0.name, "-", $0.firstNames(), "/", $0.lastNames()) }
 
 print("\nMagic people:")
 var magicPeople = [Person]() // TODO: find magic people
-magicPeople = Person.people.filter { $0.first.lasts.count > 0 && $0.last.firsts.count > 0 }
+magicPeople = Person.people.filter { $0.isMagic() }
 magicPeople.forEach { print($0.first.name, $0.last.name) }
 
 print("\nCluster sizes:")
