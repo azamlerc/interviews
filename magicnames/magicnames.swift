@@ -477,8 +477,8 @@ class Name {
     (firsts + lasts).forEach { person in
       if (!person.visited) {
         person.visited = true
-        count += 1 + 
-          person.first.countPeople() + 
+        count += 1 +
+          person.first.countPeople() +
           person.last.countPeople()
       }
     }
@@ -519,27 +519,29 @@ Person.loadPeople(nameStrings)
 var names = Array(Name.nameIndex.values)
 
 print("Top first names:")
-var firstNames = [Name]() // TODO: find top first names
-firstNames = names.sorted(by:{ $0.firsts.count > $1.firsts.count })
-firstNames = Array(firstNames[0...4])
-firstNames.forEach { print($0.name,"-",$0.lastNames()) };
+names
+  .filter { _ in true } // TODO: find top first names
+  .sorted { $0.firsts.count > $1.firsts.count }[0...4]
+  .forEach { print($0.name, "-", $0.lastNames()) };
 
 print("\nTop last names:")
-var lastNames = [Name]() // TODO: find top first names
-lastNames = names.sorted(by:{ $0.lasts.count > $1.lasts.count })
-lastNames = Array(lastNames[0...4])
-lastNames.forEach { print($0.name,"-",$0.firstNames()) };
+names
+  .filter { _ in true } // TODO: find top last names
+  .sorted { $0.lasts.count > $1.lasts.count }[0...4]
+  .forEach { print($0.name, "-", $0.firstNames()) };
 
 print("\nMagic names:")
-var magicNames = [Name]() // TODO: find magic names
-magicNames = names.filter { $0.isMagic() }
-  .sorted(by:{ $0.totalCount() > $1.totalCount() })
-magicNames.forEach { print($0.name, "-", $0.firstNames(), "/", $0.lastNames()) }
+names
+  .filter { _ in true } // TODO: find magic names
+  .filter { $0.isMagic() }
+  .sorted { $0.totalCount() > $1.totalCount() }
+  .forEach { print($0.name, "-", $0.firstNames(), "/", $0.lastNames()) }
 
 print("\nMagic people:")
-var magicPeople = [Person]() // TODO: find magic people
-magicPeople = Person.people.filter { $0.isMagic() }
-magicPeople.forEach { print($0.first.name, $0.last.name) }
+Person.people
+  .filter { _ in true } // TODO: find magic people
+  .filter { $0.isMagic() }
+  .forEach { print($0.first.name, $0.last.name) }
 
 print("\nCluster sizes:")
 var clusterSizes = [Int:Int]() // TODO: update clusterSizes
