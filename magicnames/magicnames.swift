@@ -456,24 +456,24 @@ class Name {
   }
 
   func firstNames() -> String {
-    return lasts.map({$0.first.name}).joined(separator: ", ")
+    return lasts.map {$0.first.name}.joined(separator: ", ")
   }
 
   func lastNames() -> String {
-    return firsts.map({$0.last.name}).joined(separator: ", ")
+    return firsts.map {$0.last.name}.joined(separator: ", ")
   }
 
   func countPeople() -> Int {
     var count = 0
     visited = true
-    (firsts + lasts).forEach({ person in
+    (firsts + lasts).forEach { person in
       if (!person.visited) {
         person.visited = true
         count += 1 + 
           person.first.countPeople() + 
           person.last.countPeople()
       }
-    })
+    }
     return count
   } 
 }
@@ -491,9 +491,9 @@ class Person {
   }
   
   static func loadPeople(_ nameStrings: [[String]]) {
-    for strings in nameStrings {
-      let first = Name.getName(strings[0])
-      let last = Name.getName(strings[1])
+    nameStrings.forEach {
+      let first = Name.getName($0[0])
+      let last = Name.getName($0[1])
       let person = Person(first:first, last:last)
       first.firsts.append(person)
       last.lasts.append(person)
@@ -510,34 +510,34 @@ print("Top first names:")
 var firstNames = [Name]() // TODO: find top first names
 firstNames = names.sorted(by:{ $0.firsts.count > $1.firsts.count })
 firstNames = Array(firstNames[0...4])
-firstNames.forEach({ print($0.name,"-",$0.lastNames()) });
+firstNames.forEach { print($0.name,"-",$0.lastNames()) };
 
 print("\nTop last names:")
 var lastNames = [Name]() // TODO: find top first names
 lastNames = names.sorted(by:{ $0.lasts.count > $1.lasts.count })
 lastNames = Array(lastNames[0...4])
-lastNames.forEach({ print($0.name,"-",$0.firstNames()) });
+lastNames.forEach { print($0.name,"-",$0.firstNames()) };
 
 print("\nMagic names:")
 var magicNames = [Name]() // TODO: find magic names
-magicNames = names.filter({ $0.firsts.count > 0 && $0.lasts.count > 0 })
+magicNames = names.filter { $0.firsts.count > 0 && $0.lasts.count > 0 }
   .sorted(by:{ $0.firsts.count + $0.lasts.count > 
                $1.firsts.count + $1.lasts.count })
-magicNames.forEach({ print($0.name,"-",$0.firstNames(),"/",$0.lastNames()) })
+magicNames.forEach { print($0.name,"-",$0.firstNames(),"/",$0.lastNames()) }
 
 print("\nMagic people:")
 var magicPeople = [Person]() // TODO: find magic people
-magicPeople = Person.people.filter({ $0.first.lasts.count > 0 && $0.last.firsts.count > 0 })
-magicPeople.forEach({ print($0.first.name, $0.last.name) })
+magicPeople = Person.people.filter { $0.first.lasts.count > 0 && $0.last.firsts.count > 0 }
+magicPeople.forEach { print($0.first.name, $0.last.name) }
 
 print("\nCluster sizes:")
 var clusterSizes = [Int:Int]() // TODO: update clusterSizes
-names.forEach({ name in
+names.forEach { name in
   if !name.visited {
     let count = name.countPeople()
     clusterSizes[count] = (clusterSizes[count] ?? 0) + 1
   }
-})
+}
 
 for cluster in Array(clusterSizes.keys).sorted() {
   print("\(cluster): \(clusterSizes[cluster]!)")
