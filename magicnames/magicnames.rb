@@ -270,6 +270,7 @@ nameStrings = [
   ["Michaela", "Keady"],
   ["Michelle", "Yoon"],
   ["Min", "Zhang"],
+  ["Miranda", "Ashley"],
   ["Monica", "Lee"],
   ["Moya", "Farvis"],
   ["Naader", "Khan"],
@@ -440,118 +441,107 @@ class Name
   attr_accessor :lasts
   attr_accessor :visited
   
-  def initialize(name) {
+  def initialize(name)
     @name = name
     @firsts = []
     @lasts = []
     @visited = false
-  }
-
-  def getName(value)
-    if let name = nameIndex[value] {
-      return name
-    elsif
-      let name = Name(name:value)
-      nameIndex[value] = name
-      return name
-    end
   end
 
   def firstNames
-    return lasts.map { |name| name.first.name}.joined(separator: ", ")
+    return lasts.map { |name| name.first.name}.join(", ")
   end
 
   def lastNames
-    return firsts.map { |name| name.last.name}.joined(separator: ", ")
+    return firsts.map { |name| name.last.name}.join(", ")
   end
 
   def isMagic
-    return firsts.count > 0 && lasts.length > 0
+    return firsts.count > 0 && lasts.count > 0
   end
 
   def totalCount
-    return firsts.count + lasts.length
+    return firsts.count + lasts.count
   end
 
-  # func countPeople() -> Int {
-  #   var count = 0
-  #   visited = true
-  #   (firsts + lasts).forEach { person in
-  #     if (!person.visited) {
-  #       person.visited = true
-  #       count += 1 +
-  #         person.first.countPeople() +
-  #         person.last.countPeople()
-  #     }
-  #   }
-  #   return count
-  # } 
+  def countPeople()
+    count = 0
+    visited = true
+    (firsts + lasts).each { |person|
+      if !person.visited
+        person.visited = true
+        count += 1 +
+          person.first.countPeople() +
+          person.last.countPeople()
+      end
+    }
+    return count
+  end
 end
 
 class Person
-  var first: Name
-  var last: Name
-  var visited = false
+  attr_accessor :first
+  attr_accessor :last
+  attr_accessor :visited
   
-  def initialize(first, last) {
+  def initialize(first, last)
     @first = first
     @last = last
     @visited = false
-  }
+  end
   
   def isMagic
     return first.lasts.length > 0 && last.firsts.length > 0
   end
 end
 
-nameIndex = {}
 people = []
+nameIndex = Hash.new { |hash,key| hash[key] = Name.new(key) }
 
 nameStrings.each { |strings|
-  first = Name.getName(strings[0])
-  last = Name.getName(strings[1])
-  person = Person(first, last)
+  first = nameIndex[strings[0]]
+  last = nameIndex[strings[1]]
+  person = Person.new(first, last)
   first.firsts.push(person)
   last.lasts.push(person)
   people.push(person)
 }
 
 names = nameIndex.values
-# 
-# print("Top first names:")
-# names
-#   .filter { _ in true } // TODO: find top first names
-#   .sorted { $0.firsts.count > $1.firsts.count }[0...4]
-#   .forEach { print($0.name, "-", $0.lastNames()) };
-# 
-# print("\nTop last names:")
-# names
-#   .filter { _ in true } // TODO: find top last names
-#   .sorted { $0.lasts.count > $1.lasts.count }[0...4]
-#   .forEach { print($0.name, "-", $0.firstNames()) };
-# 
-# print("\nMagic names:")
-# names
-#   .filter { _ in true } // TODO: find magic names
-#   .filter { $0.isMagic() }
-#   .sorted { $0.totalCount() > $1.totalCount() }
-#   .forEach { print($0.name, "-", $0.firstNames(), "/", $0.lastNames()) }
-# 
-# print("\nMagic people:")
-# Person.people
-#   .filter { _ in true } // TODO: find magic people
-#   .filter { $0.isMagic() }
-#   .forEach { print($0.first.name, $0.last.name) }
-# 
-# print("\nCluster sizes:")
-# var clusterSizes = [Int:Int]() // TODO: update clusterSizes
-# names.forEach { name in
-#   if !name.visited {
-#     clusterSizes[name.countPeople(), default: 0] += 1
-#   }
-# }
-# 
-# for cluster in Array(clusterSizes.keys).sorted() {
-#   print("\(cluster): \(clusterSizes[cluster]!)")
-# }
-# 
+
+puts "Top first names:"
+names
+  .filter { |name| true } # TODO: find top first names
+  .sort { |n1,n2| n2.firsts.count <=> n1.firsts.count }[0,5]
+  .each { |name| puts name.name + " - " + name.lastNames() }
+
+puts "\nTop last names:"
+names
+  .filter { |name| true } # TODO: find top first names
+  .sort { |n1,n2| n2.lasts.count <=> n1.lasts.count }[0,5]
+  .each { |name| puts name.name + " - " + name.firstNames() }
+
+puts "\nMagic names:"
+names
+  .filter { |name| true } # TODO: find magic names
+  .filter { |name| name.isMagic() }
+  .sort { |n1,n2| n2.totalCount() <=> n1.totalCount() }
+  .each { |name| puts name.name + " - " + name.firstNames() + " / " +  name.lastNames() }
+
+puts "\nMagic people:"
+people
+  .filter { |person| true } # TODO: find magic people
+  .filter { |person| person.isMagic() }
+  .each { |name| puts name.first.name + " " + name.last.name }
+
+puts "\nCluster sizes:"
+clusterSizes = Hash.new { |hash,key| hash[key] = 0 }
+names.each { |name|
+  if !name.visited
+    clusterSizes[name.countPeople()] += 1
+  end
+}
+
+clusterSizes.keys.sort.each { |cluster|
+  puts "#{cluster}: #{clusterSizes[cluster]}"
+}
