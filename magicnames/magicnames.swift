@@ -272,6 +272,7 @@ let nameStrings = [
   ["Michaela", "Keady"],
   ["Michelle", "Yoon"],
   ["Min", "Zhang"],
+  ["Miranda", "Ashley"],
   ["Monica", "Lee"],
   ["Moya", "Farvis"],
   ["Naader", "Khan"],
@@ -525,13 +526,13 @@ print("Top first names:")
 names
   .filter { _ in true } // TODO: find top first names
   .sorted { $0.firsts.count > $1.firsts.count }[0...4]
-  .forEach { print($0.name, "-", $0.lastNames()) };
+  .forEach { print($0.name, "-", $0.lastNames()) }
 
 print("\nTop last names:")
 names
   .filter { _ in true } // TODO: find top last names
   .sorted { $0.lasts.count > $1.lasts.count }[0...4]
-  .forEach { print($0.name, "-", $0.firstNames()) };
+  .forEach { print($0.name, "-", $0.firstNames()) }
 
 print("\nMagic names:")
 names
