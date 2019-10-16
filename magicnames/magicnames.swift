@@ -451,6 +451,7 @@ let nameStrings = [
   ["Zhongxia", "Zhou"],
   ["Zhouqian", "Ma"],
   ["Zhuoyuan", "Zhang"],
+  ["Zi", "Lian"],
   ["Zikang", "Yao"],
   ["Zoey", "Sun"],
   ["Zvi", "Band"]
