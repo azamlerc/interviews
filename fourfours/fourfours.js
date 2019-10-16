@@ -69,5 +69,5 @@ function printFours(fours) {
   }
 }
 
-const fours = fourFours()
-printFours(fours)
+const fours = fourFours();
+printFours(fours);
