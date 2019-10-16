@@ -513,7 +513,7 @@ class Solution {
     System.out.println("\nMagic people:");
     people.stream()
       // .filter((name) -> false) // TODO: find magic people
-      .filter(person -> 
+      .filter((person) ->
         person.first.lasts.size() > 0 && 
         person.last.firsts.size() > 0)
       .forEach((person) -> 
