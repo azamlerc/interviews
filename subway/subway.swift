@@ -3,7 +3,7 @@
 // Take a section of the Manhattan street grid bounded by Ave A to 11 Av, and Houston St to 59 St. We can express coordinates as (blocks west of Ave A, blocks north of Houston). For example, the coordinates for the Compass office are (5,14) because it is at the intersection of 5 Av and 14 St. 
 
 // Visualization:
-// http://www.zamler-carhart.com/andrew/subway.html
+// https://andrewzc.net/subway.html
 
 import Foundation
 
