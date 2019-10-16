@@ -35,6 +35,7 @@ nameStrings = [
   ["Ali", "Weaver"],
   ["Alice", "Yoon"],
   ["Alissa", "Mittelberg"],
+  ["Allen", "Garzone"],
   ["Allison", "Moore"],
   ["Allison", "Ng"],
   ["Amit", "Wadhera"],
@@ -48,10 +49,12 @@ nameStrings = [
   ["Angel", "Dionisio"],
   ["Angelina", "Lam"],
   ["Anna", "Avrekh"],
+  ["Anna", "Lee"],
   ["Anthony", "Escamilla"],
   ["Anthony", "Gonzales"],
   ["Anya", "Tran"],
   ["Aparna", "Parlapalli"],
+  ["Ashley", "Murphy"],
   ["Ashrit", "Kamireddi"],
   ["Avraham", "Blaut"],
   ["Azfar", "Aziz"],
@@ -96,11 +99,13 @@ nameStrings = [
   ["Chris", "Lee"],
   ["Chris", "Seltzer"],
   ["Chrissy", "Oliver"],
+  ["Christina", "Allen"],
   ["Cindy", "Zhang"],
   ["Claire", "Cipriani"],
   ["Cory", "Perkins"],
   ["Daljeet", "Kukreja"],
   ["Dan", "Clark"],
+  ["Dan", "Edenhofer"],
   ["Dan", "McClure"],
   ["Dan", "Raykhlin"],
   ["Dana", "Bruschi"],
@@ -149,6 +154,7 @@ nameStrings = [
   ["George", "Markantonis"],
   ["Grant", "Harper"],
   ["Greg", "Mushen"],
+  ["Greg", "Scott"],
   ["Griffin", "Jones"],
   ["Hadar", "Yacobovitz"],
   ["Haiyang", "Si"],
@@ -163,8 +169,10 @@ nameStrings = [
   ["Herson", "Castillo"],
   ["Hiram", "Moncivais"],
   ["Hongwei", "Wang"],
+  ["Hu", "Zhou"],
   ["Ian", "Cohan-Shapiro"],
   ["Ilya", "Timofeyev"],
+  ["Jack", "Amadeo"],
   ["Jack", "Murphy"],
   ["Jackie", "Lynch"],
   ["Jackson", "Cheek"],
@@ -196,6 +204,7 @@ nameStrings = [
   ["John", "Simon"],
   ["Jon", "Fu"],
   ["Jonathan", "Word"],
+  ["Jonny", "Mooneyham"],
   ["Joseph", "Galindo"],
   ["Joseph", "Schmitt"],
   ["Joseph", "Sirosh"],
@@ -204,6 +213,7 @@ nameStrings = [
   ["Josh", "Burton"],
   ["Josh", "Nili"],
   ["Josh", "Stern"],
+  ["Juan", "Ayala"],
   ["Julia", "Poladsky"],
   ["Julio", "Dionisio"],
   ["Junqi", "Liao"],
@@ -241,6 +251,7 @@ nameStrings = [
   ["Leilah", "Williams"],
   ["Leo", "Yu"],
   ["Lihui", "Cai"],
+  ["Lilly", "Ju"],
   ["Lindsay", "Owen"],
   ["Lucas", "Lain"],
   ["Lucas", "Reis"],
@@ -266,6 +277,7 @@ nameStrings = [
   ["Michael", "Marion"],
   ["Michael", "Niday"],
   ["Michael", "Quinn"],
+  ["Michael", "Walters"],
   ["Michael", "Wang"],
   ["Michaela", "Keady"],
   ["Michelle", "Yoon"],
@@ -277,6 +289,7 @@ nameStrings = [
   ["Naomi", "Robert"],
   ["Nate", "Rentmeester"],
   ["Nathan", "Miranda"],
+  ["Nathan", "Wang"],
   ["Nathaniel", "Brakeley"],
   ["Nathaniel", "Morihara"],
   ["Nicole", "Reinhardsen"],
@@ -288,6 +301,7 @@ nameStrings = [
   ["Octavio", "Roscioli"],
   ["Oliver", "Castillo"],
   ["Oliver", "Scott"],
+  ["Ori", "Allon"],
   ["Ori", "Damary"],
   ["Osman", "Ozdemir"],
   ["Owen", "Charles"],
@@ -295,24 +309,26 @@ nameStrings = [
   ["Pablo", "Mata"],
   ["Paola", "Justiniano"],
   ["Parth", "Patel"],
-  ["Paulus", "Joy"],
+  ["Paul", "Brown"],
   ["Perry", "Yee"],
   ["Peter", "Liang"],
   ["Peter", "Liu"],
   ["Peter", "Ta"],
   ["Preetpal", "Phandar"],
   ["Raghav", "Sachdev"],
-  ["Rahul", "Singh"],
   ["Rahul", "Ratnakar"],
+  ["Rahul", "Singh"],
   ["Raju", "Matta"],
   ["Ran", "Ding"],
   ["Raquel", "Bujans"],
+  ["Ray", "Bueno"],
   ["Raymond", "Leung"],
   ["Raymond", "Wang"],
   ["Renato", "Gamboa"],
   ["Revathi", "Kandoji"],
   ["Rex", "Zhang"],
-  ["Richard", "Pean"],
+  ["Rich", "Pean"],
+  ["Rich", "Simon"],
   ["Robert", "Gray"],
   ["Robert", "Reffkin"],
   ["Roger", "Geng"],
@@ -362,6 +378,7 @@ nameStrings = [
   ["Shean", "Kim"],
   ["Shelley", "Zhong"],
   ["Shenzhi", "Li"],
+  ["Shiloh", "Stuart"],
   ["Shirley", "Zhang"],
   ["Shiyang", "Fei"],
   ["Shiyuan", "Wang"],
@@ -378,6 +395,7 @@ nameStrings = [
   ["Tal", "Amitai"],
   ["Tal", "Netanyahu"],
   ["Tania", "Goswami"],
+  ["Tao", "Xie"],
   ["Terry", "Zheng"],
   ["Theodore", "Rose"],
   ["Thomas", "Cardwell"],
@@ -432,6 +450,7 @@ nameStrings = [
   ["Zhouqian", "Ma"],
   ["Zhuoyuan", "Zhang"],
   ["Zikang", "Yao"],
+  ["Zoey", "Sun"],
   ["Zvi", "Band"]
 ]
  
@@ -513,29 +532,30 @@ puts "Top first names:"
 names
   .filter { |name| true } # TODO: find top first names
   .sort { |n1,n2| n2.firsts.count <=> n1.firsts.count }[0,5]
-  .each { |name| puts name.name + " - " + name.lastNames() }
+  .each { |name| puts "#{name.name} - #{name.lastNames()}" }
 
 puts "\nTop last names:"
 names
   .filter { |name| true } # TODO: find top first names
   .sort { |n1,n2| n2.lasts.count <=> n1.lasts.count }[0,5]
-  .each { |name| puts name.name + " - " + name.firstNames() }
+  .each { |name| puts "#{name.name} - #{name.firstNames()}" }
 
 puts "\nMagic names:"
 names
   .filter { |name| true } # TODO: find magic names
   .filter { |name| name.isMagic() }
   .sort { |n1,n2| n2.totalCount() <=> n1.totalCount() }
-  .each { |name| puts name.name + " - " + name.firstNames() + " / " +  name.lastNames() }
+  .each { |name| puts "#{name.name} - #{name.firstNames()} / #{name.lastNames()}" }
 
 puts "\nMagic people:"
 people
   .filter { |person| true } # TODO: find magic people
   .filter { |person| person.isMagic() }
-  .each { |name| puts name.first.name + " " + name.last.name }
+  .each { |name| puts "#{name.first.name} #{name.last.name}" }
 
 puts "\nCluster sizes:"
 clusterSizes = Hash.new { |hash,key| hash[key] = 0 }
+# TODO update clusterSizes
 names.each { |name|
   if !name.visited
     clusterSizes[name.countPeople()] += 1
