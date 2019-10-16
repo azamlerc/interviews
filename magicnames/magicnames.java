@@ -455,6 +455,7 @@ class Solution {
     {"Zhongxia", "Zhou"},
     {"Zhouqian", "Ma"},
     {"Zhuoyuan", "Zhang"},
+    {"Zi", "Lian"},
     {"Zikang", "Yao"},
     {"Zoey", "Sun"},
     {"Zvi", "Band"}
@@ -466,11 +467,15 @@ class Solution {
     
     // builds the graph network for people and names
     for (int i = 0; i < nameStrings.length; i++) {
-      Name first = Name.getName(nameStrings[i][0]);
-      Name last = Name.getName(nameStrings[i][1]);
-      Person person = new Person(first, last);
-      first.firsts.add(person);
-      last.lasts.add(person);
+      String first = nameStrings[i][0];
+      String last = nameStrings[i][1];
+      Name firstName = nameIndex.getOrDefault(first, new Name(first));
+      Name lastName = nameIndex.getOrDefault(last, new Name(last));
+      nameIndex.put(first, firstName);
+      nameIndex.put(last, lastName);
+      Person person = new Person(firstName, lastName);
+      firstName.firsts.add(person);
+      lastName.lasts.add(person);
       people.add(person);
     }
     names = new ArrayList<Name>(Name.nameIndex.values());
@@ -550,15 +555,6 @@ class Name {
     this.firsts = new ArrayList<>();
     this.lasts = new ArrayList<>();
     this.visited = false;
-  }
-  
-  static Name getName(String value) {
-    Name name = nameIndex.get(value);
-    if (name == null) {
-      name = new Name(value);
-      nameIndex.put(value, name);
-    }
-    return name;
   }
   
   String firstNames() {
