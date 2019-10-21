@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # Four fours is a mathematical puzzle. The goal is to find a mathematical
 # expression for every whole number from 1 to 100, using only common
 # mathematical symbols and the number four four times.
