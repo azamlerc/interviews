@@ -512,12 +512,12 @@ int main (int argc, const char * argv[]) {
     NSMutableArray *people = [NSMutableArray array];
     
     for (NSArray *firstLast in nameStrings) {
-      Name *first = [Name getName: firstLast[0]];
-      Name *last = [Name getName: firstLast[1]];
+      Name *first = [Name getName:firstLast[0]];
+      Name *last = [Name getName:firstLast[1]];
       Person *person = [Person personWithFirst:first last:last];
-      [first.firsts addObject: person];
-      [last.lasts addObject: person];
-      [people addObject: person];
+      [first.firsts addObject:person];
+      [last.lasts addObject:person];
+      [people addObject:person];
     }
 
     NSMutableArray *names = [Name allNames];
@@ -527,7 +527,7 @@ int main (int argc, const char * argv[]) {
       return YES;
     }] sortByInt:^int(Name *name) {
       return [name.firsts count];
-    }] reverse] limit: 5] each:^(Name *name) {
+    }] reverse] limit:5] each:^(Name *name) {
       NSLog(@"%@ - %@", name.name, [name lastNames]);
     }];
 
@@ -536,7 +536,7 @@ int main (int argc, const char * argv[]) {
       return YES;
     }] sortByInt:^int(Name *name) {
       return [name.lasts count];
-    }] reverse] limit: 5] each:^(Name *name) {
+    }] reverse] limit:5] each:^(Name *name) {
       NSLog(@"%@ - %@", name.name, [name firstNames]);
     }];
 
@@ -564,20 +564,20 @@ int main (int argc, const char * argv[]) {
     NSMutableDictionary *clusterSizes = [NSMutableDictionary dictionary];
     for (Name *name in names) {
       if (!name.visited) {
-        NSNumber *size = [NSNumber numberWithInt: [name countPeople]];
-        NSNumber *count = [clusterSizes objectForKey: size];
+        NSNumber *size = [NSNumber numberWithInt:[name countPeople]];
+        NSNumber *count = [clusterSizes objectForKey:size];
         if (count == nil) {
-          count = [NSNumber numberWithInt: 1];
+          count = [NSNumber numberWithInt:1];
         } else {
-          count = [NSNumber numberWithInt: [count intValue] + 1];
+          count = [NSNumber numberWithInt:[count intValue] + 1];
         }
-        [clusterSizes setObject: count forKey: size];
+        [clusterSizes setObject:count forKey:size];
       }
     }
 
     NSArray *sizes = [[clusterSizes allKeys] sortedArrayUsingSelector:@selector(compare:)];
     for (NSNumber *cluster in sizes) {
-      NSLog(@"%@: %@", cluster, [clusterSizes objectForKey: cluster]);
+      NSLog(@"%@: %@", cluster, [clusterSizes objectForKey:cluster]);
     }
   }
 }
@@ -617,13 +617,13 @@ static NSMutableDictionary *nameIndex;
 - (NSString *) firstNames {
   return [[self.lasts map:^(id person) {
     return ((Person *)person).first.name;
-  }] componentsJoinedByString: @", "];
+  }] componentsJoinedByString:@", "];
 }
 
 - (NSString *) lastNames {
   return [[self.firsts map:^(id person) {
     return ((Person *)person).last.name;
-  }] componentsJoinedByString: @", "];
+  }] componentsJoinedByString:@", "];
 }
 
 - (bool) isMagic {
@@ -637,7 +637,7 @@ static NSMutableDictionary *nameIndex;
 - (int) countPeople {
   int count = 0;
   self.visited = true;
-  NSArray *allPeople = [self.firsts arrayByAddingObjectsFromArray: self.lasts];
+  NSArray *allPeople = [self.firsts arrayByAddingObjectsFromArray:self.lasts];
 
   for (Person *person in allPeople) {
     if (!person.visited) {
@@ -682,7 +682,7 @@ static NSMutableDictionary *nameIndex;
 
 - (NSArray *) sortByInt:(int(^)(id object))block {
   return [self sortedArrayUsingComparator:^(id a, id b) {
-    return [[NSNumber numberWithInt: block(a)] compare:[NSNumber numberWithInt: block(b)]];
+    return [[NSNumber numberWithInt:block(a)] compare:[NSNumber numberWithInt:block(b)]];
   }];
 }
 
