@@ -7,11 +7,13 @@ Fun interview questions in various languages:
 - Go
 - Java
 - JavaScript
+- Kotlin
 - Objective-C
 - PHP
 - Python
 - Ruby
 - Swift
+- TypeScript
 
 ## Four Fours
 
