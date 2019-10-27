@@ -51,10 +51,10 @@
 @interface NSArray (FunctionalAdditions)
 
 - (void) each:(void(^)(id object))block;
-- (NSArray *) sort:(NSComparator)block;
-- (NSArray *) sortByInt:(int(^)(id object))block;
 - (NSArray *) map:(id(^)(id object))block;
 - (NSArray *) filter:(BOOL(^)(id object))block;
+- (NSArray *) sort:(NSComparator)block;
+- (NSArray *) sortByInt:(int(^)(id object))block;
 - (NSArray *) reverse;
 - (NSArray *) limit:(int)limit;
 
@@ -676,16 +676,6 @@ static NSMutableDictionary *nameIndex;
   }
 }
 
-- (NSArray *) sort:(NSComparator)block {
-  return [self sortedArrayUsingComparator:block];
-}
-
-- (NSArray *) sortByInt:(int(^)(id object))block {
-  return [self sortedArrayUsingComparator:^(id a, id b) {
-    return [[NSNumber numberWithInt:block(a)] compare:[NSNumber numberWithInt:block(b)]];
-  }];
-}
-
 - (NSArray *) map:(id(^)(id object))block {
   NSMutableArray *result = [NSMutableArray array];
   for (id object in self) {
@@ -702,6 +692,16 @@ static NSMutableDictionary *nameIndex;
     }
   }
   return result;
+}
+
+- (NSArray *) sort:(NSComparator)block {
+  return [self sortedArrayUsingComparator:block];
+}
+
+- (NSArray *) sortByInt:(int(^)(id object))block {
+  return [self sortedArrayUsingComparator:^(id a, id b) {
+    return [[NSNumber numberWithInt:block(a)] compare:[NSNumber numberWithInt:block(b)]];
+  }];
 }
 
 - (NSArray *) reverse {
