@@ -17,18 +17,6 @@
 
 // Diagram: https://andrewzc.net/interviews/names.pdf
 
-@interface NSArray (FunctionalAdditions)
-
-- (void) each:(void(^)(id object))block;
-- (NSArray *) sort:(NSComparator)block;
-- (NSArray *) sortByInt:(int(^)(id object))block;
-- (NSArray *) map:(id(^)(id object))block;
-- (NSArray *) filter:(BOOL(^)(id object))block;
-- (NSArray *) reverse;
-- (NSArray *) limit:(int)limit;
-
-@end
-
 @interface Name: NSObject
 
 @property NSString *name;
@@ -57,6 +45,18 @@
 + (Person *) personWithFirst:(Name *)first last:(Name *)last;
 
 - (bool) isMagic;
+
+@end
+
+@interface NSArray (FunctionalAdditions)
+
+- (void) each:(void(^)(id object))block;
+- (NSArray *) sort:(NSComparator)block;
+- (NSArray *) sortByInt:(int(^)(id object))block;
+- (NSArray *) map:(id(^)(id object))block;
+- (NSArray *) filter:(BOOL(^)(id object))block;
+- (NSArray *) reverse;
+- (NSArray *) limit:(int)limit;
 
 @end
 
@@ -523,21 +523,27 @@ int main (int argc, const char * argv[]) {
     NSMutableArray *names = [Name allNames];
 
     NSLog(@"Top first names:");
-    [[[[names sortByInt:^int(Name *name) {
+    [[[[[names filter:^BOOL(Name *name) {
+      return YES;
+    }] sortByInt:^int(Name *name) {
       return [name.firsts count];
     }] reverse] limit: 5] each:^(Name *name) {
       NSLog(@"%@ - %@", name.name, [name lastNames]);
     }];
 
     NSLog(@"\nTop last names:");
-    [[[[names sortByInt:^int(Name *name) {
+    [[[[[names filter:^BOOL(Name *name) {
+      return YES;
+    }] sortByInt:^int(Name *name) {
       return [name.lasts count];
     }] reverse] limit: 5] each:^(Name *name) {
       NSLog(@"%@ - %@", name.name, [name firstNames]);
     }];
 
     NSLog(@"\nMagic names:");
-    [[[[names filter:^BOOL(Name *name) {
+    [[[[[names filter:^BOOL(Name *name) {
+      return YES;
+    }] filter:^BOOL(Name *name) {
       return [name isMagic];
     }] sortByInt:^int(Name *name) {
       return [name totalCount];
@@ -546,7 +552,9 @@ int main (int argc, const char * argv[]) {
     }];
 
     NSLog(@"\nMagic people:");
-    [[people filter:^BOOL(Person *person) {
+    [[[people filter:^BOOL(Person *person) {
+      return YES;
+    }] filter:^BOOL(Person *person) {
       return [person isMagic];
     }] each:^(Person *person) {
       NSLog(@"%@ %@", person.first.name, person.last.name);
