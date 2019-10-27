@@ -469,7 +469,7 @@ class Name {
     self.name = name
   }
 
-  static func getName(_ value: String) -> Name {
+  static fun getName(_ value: String) -> Name {
     if let name = nameIndex[value] {
       return name
     } else {
@@ -479,23 +479,23 @@ class Name {
     }
   }
 
-  func firstNames() -> String {
+  fun firstNames() -> String {
     return lasts.map {$0.first.name}.joined(separator: ", ")
   }
 
-  func lastNames() -> String {
+  fun lastNames() -> String {
     return firsts.map {$0.last.name}.joined(separator: ", ")
   }
 
-  func isMagic() -> Bool {
+  fun isMagic() -> Bool {
     return firsts.count > 0 && lasts.count > 0
   }
 
-  func totalCount() -> Int {
+  fun totalCount() -> Int {
     return firsts.count + lasts.count
   }
 
-  func countPeople() -> Int {
+  fun countPeople() -> Int {
     var count = 0
     visited = true
     (firsts + lasts).forEach { person in
@@ -522,7 +522,7 @@ class Person {
     self.last = last
   }
   
-  static func loadPeople(_ nameStrings: [[String]]) {
+  static fun loadPeople(_ nameStrings: [[String]]) {
     nameStrings.forEach {
       let first = Name.getName($0[0])
       let last = Name.getName($0[1])
@@ -533,7 +533,7 @@ class Person {
     }
   }
 
-  func isMagic() -> Bool {
+  fun isMagic() -> Bool {
     return first.lasts.count > 0 && last.firsts.count > 0
   }
 }

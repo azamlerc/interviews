@@ -1,17 +1,17 @@
 # Here is a list of the people on our team.
 
 # 1. What are the five most popular first names?
- 
+
 # 2. What are the five most popular last names?
 
 # 3. Which "magic" names occur as both first and last names?
- 
+
 # 4. Which "magic" people have a first name that is someone's last name, and a last name that is someone's first name?
 
 # 5. People are in a group if their names are connected in some way. For example, Landin King, Roger King, and Roger Geng are in a group of 3 people. Print the number of groups of each size.
-   
+
 # 6. Do the results change if you add your name to the list?
- 
+
 # Diagram: https://andrewzc.net/interviews/names.pdf
 
 people = [
@@ -242,7 +242,7 @@ people = [
   ["Kim", "Nguyen"],
   ["Ksenia", "Coulter"],
   ["Kyle", "Rocco"],
-  ["Kyler", "Cameron"], 
+  ["Kyler", "Cameron"],
   ["Lan", "Jiang"],
   ["Landin", "King"],
   ["Lauren", "Jones"],
@@ -417,7 +417,7 @@ people = [
   ["Victor", "Zhu"],
   ["Vincent", "Vuong"],
   ["Vivian", "Wong"],
-  ["Warren", "Miller"], 
+  ["Warren", "Miller"],
   ["Wei", "Su"],
   ["Wei", "Wang"],
   ["Wen", "Ye"],
@@ -456,135 +456,135 @@ people = [
 ]
 
 defmodule Name do
-  def isMagic(name, firstIndex, lastIndex) do
-    Map.has_key?(firstIndex, name) && Map.has_key?(lastIndex, name)
+  def isMagic(name, firsts, lasts) do
+    Map.has_key?(firsts, name) && Map.has_key?(lasts, name)
   end
 
-  def totalCount(name, firstIndex, lastIndex) do
-    length(Map.get(firstIndex, name)) + length(Map.get(lastIndex, name))
+  def totalCount(name, firsts, lasts) do
+    length(Map.get(firsts, name)) + length(Map.get(lasts, name))
   end
-  
-  def valueString(name, index) do 
+
+  def valueString(name, index) do
     index[name] |> Enum.reverse() |> Enum.join(", ")
   end
-  
-  def visit(name, firstIndex, lastIndex, visitedNames, visitedPeople) do
-    if (name in visitedNames) do
-      {0, visitedNames, visitedPeople}
+
+  def allPeople(name, firsts, lasts) do
+    Enum.map(Map.get(firsts, name, []), fn(firstName) -> [firstName, name] end) ++
+    Enum.map(Map.get(lasts, name, []), fn(lastName) -> [name, lastName] end)
+  end
+
+  def visit(name, firsts, lasts, vNames, vPeople) do
+    if (name in vNames) do
+      {0, vNames, vPeople}
     else
-      visitedNames = [name | visitedNames]
-      firstNames = Map.get(firstIndex, name, [])
-      lastNames = Map.get(lastIndex, name, [])
+      vNames = [name | vNames]
+      people = allPeople(name, firsts, lasts)
       count = 0
 
-      {count, visitedNames, visitedPeople} = Enum.reduce(firstNames, {count, visitedNames, visitedPeople}, fn(firstName, {count, visitedNames, visitedPeople}) -> 
-        person = [firstName, name]
-        {firstCount, visitedNames, visitedPeople} = Person.visit(person, firstIndex, lastIndex, visitedNames, visitedPeople)
-        count = count + firstCount
-        {count, visitedNames, visitedPeople}
+      {count, vNames, vPeople} = Enum.reduce(people, {count, vNames, vPeople},
+        fn(person, {count, vNames, vPeople}) ->
+          Person.visit(person, firsts, lasts, vNames, vPeople, count)
       end)
 
-      {count, visitedNames, visitedPeople} = Enum.reduce(lastNames, {count, visitedNames, visitedPeople}, fn(lastName, {count, visitedNames, visitedPeople}) -> 
-        person = [name, lastName]
-        {lastCount, visitedNames, visitedPeople} = Person.visit(person, firstIndex, lastIndex, visitedNames, visitedPeople)
-        count = count + lastCount
-        {count, visitedNames, visitedPeople}
-      end)
-  
-      {count, visitedNames, visitedPeople}
-    end  
+      {count, vNames, vPeople}
+    end
   end
 end
 
 defmodule Person do
-  def firstName(person) do 
+  def firstName(person) do
     Enum.at(person, 0)
   end
 
-  def lastName(person) do 
+  def lastName(person) do
     Enum.at(person, 1)
   end
 
-  def isMagic(person, firstIndex, lastIndex) do
-    Map.has_key?(firstIndex, firstName(person)) && Map.has_key?(lastIndex, lastName(person))
+  def isMagic(person, firsts, lasts) do
+    Map.has_key?(firsts, firstName(person)) && Map.has_key?(lasts, lastName(person))
   end
 
-  def visit(person, firstIndex, lastIndex, visitedNames, visitedPeople) do
-    if (person in visitedPeople) do
-      {0, visitedNames, visitedPeople}
+  def visit(person, firsts, lasts, vNames, vPeople, count) do
+    if (person in vPeople) do
+      {count, vNames, vPeople}
     else
-      visitedPeople = [person | visitedPeople]
-      
-      {firstCount, visitedNames, visitedPeople} = Name.visit(Person.firstName(person), firstIndex, lastIndex, visitedNames, visitedPeople)
-      {lastCount, visitedNames, visitedPeople} = Name.visit(Person.lastName(person), firstIndex, lastIndex, visitedNames, visitedPeople)
-      
-      {1 + firstCount + lastCount, visitedNames, visitedPeople}
+      vPeople = [person | vPeople]
+
+      {firstCount, vNames, vPeople} =
+        Name.visit(Person.firstName(person), firsts, lasts, vNames, vPeople)
+      {lastCount, vNames, vPeople} =
+        Name.visit(Person.lastName(person), firsts, lasts, vNames, vPeople)
+      {count + 1 + firstCount + lastCount, vNames, vPeople}
     end
   end
 end
-  
-lastIndex = %{} # arrays of last names indexed by first name
-firstIndex = %{} # arays of first names indexed by last name
 
-{firstIndex, lastIndex} = Enum.reduce(people, {firstIndex, lastIndex}, fn(person, {firstIndex, lastIndex}) ->
+lasts = %{} # arrays of last names indexed by first name
+firsts = %{} # arrays of first names indexed by last name
+
+{firsts, lasts} = Enum.reduce(people, {firsts, lasts}, fn(person, {firsts, lasts}) ->
     firstName = Person.firstName(person)
     lastName = Person.lastName(person)
-    firstNames = [firstName | Map.get(firstIndex, lastName, [])]
-    lastNames = [lastName | Map.get(lastIndex, firstName, [])]
-    firstIndex = Map.put(firstIndex, lastName, firstNames)
-    lastIndex = Map.put(lastIndex, firstName, lastNames)
-    {firstIndex, lastIndex}
+    firstNames = [firstName | Map.get(firsts, lastName, [])]
+    lastNames = [lastName | Map.get(lasts, firstName, [])]
+    firsts = Map.put(firsts, lastName, firstNames)
+    lasts = Map.put(lasts, firstName, lastNames)
+    {firsts, lasts}
 end)
 
-firstNames = Map.keys(lastIndex)
-lastNames = Map.keys(firstIndex)
+firstNames = Map.keys(lasts)
+lastNames = Map.keys(firsts)
 allNames = [firstNames | lastNames] |> Enum.uniq()
 
 # 1. Print the five most common first names
 IO.puts "Top first names:"
 firstNames
-  |> Enum.sort(fn(n1, n2) -> length(lastIndex[n1]) > length(lastIndex[n2]) end)
+  |> Enum.filter(fn(_) -> true end)
+  |> Enum.sort(fn(n1, n2) -> length(lasts[n1]) > length(lasts[n2]) end)
   |> Enum.slice(0..4)
-  |> Enum.each(fn(name) -> 
-    IO.puts("#{name} - #{Name.valueString(name, lastIndex)}") end)
+  |> Enum.each(fn(name) ->
+    IO.puts("#{name} - #{Name.valueString(name, lasts)}") end)
 
 # 2. Print the five most common last names
 IO.puts "\nTop last names:"
 lastNames
-  |> Enum.sort(fn(n1, n2) -> length(firstIndex[n1]) > length(firstIndex[n2]) end)
+  |> Enum.filter(fn(_) -> true end)
+  |> Enum.sort(fn(n1, n2) -> length(firsts[n1]) > length(firsts[n2]) end)
   |> Enum.slice(0..4)
-  |> Enum.each(fn(name) -> 
-    IO.puts("#{name} - #{Name.valueString(name, firstIndex)}") end)
+  |> Enum.each(fn(name) ->
+    IO.puts("#{name} - #{Name.valueString(name, firsts)}") end)
 
 # 3. Print the magic names
 IO.puts "\nMagic names:"
 allNames
-  |> Enum.filter(fn(name) -> Name.isMagic(name, firstIndex, lastIndex) end)
+  |> Enum.filter(fn(_) -> true end)
+  |> Enum.filter(fn(name) -> Name.isMagic(name, firsts, lasts) end)
   |> Enum.sort()
   |> Enum.reverse()
-  |> Enum.sort(fn(n1, n2) -> 
-    Name.totalCount(n1, firstIndex, lastIndex) > Name.totalCount(n2, firstIndex, lastIndex) end)
-  |> Enum.each(fn(name) -> 
-    IO.puts("#{name} - #{Name.valueString(name, firstIndex)} / #{Name.valueString(name, lastIndex)}") end)
+  |> Enum.sort(fn(n1, n2) ->
+    Name.totalCount(n1, firsts, lasts) > Name.totalCount(n2, firsts, lasts) end)
+  |> Enum.each(fn(name) ->
+    IO.puts("#{name} - #{Name.valueString(name, firsts)} / #{Name.valueString(name, lasts)}") end)
 
 IO.puts "\nMagic people:"
 people
-  |> Enum.filter(fn(person) -> Person.isMagic(person, firstIndex, lastIndex) end)
-  |> Enum.each(fn(person) -> 
+  |> Enum.filter(fn(_) -> true end)
+  |> Enum.filter(fn(person) -> Person.isMagic(person, firsts, lasts) end)
+  |> Enum.each(fn(person) ->
     IO.puts("#{Person.firstName(person)} #{Person.lastName(person)}") end)
 
 IO.puts "\nCluster sizes:"
-clusterSizes = %{}
-visitedNames = []
-visitedPeople = []
+clusters = %{}
+vNames = []
+vPeople = []
 
-{clusterSizes, _visitedNames, _visitedPeople} = Enum.reduce(allNames, {clusterSizes, visitedNames, visitedPeople}, fn(name, {clusterSizes, visitedNames, visitedPeople}) ->
-  {size, visitedNames, visitedPeople} = Name.visit(name, firstIndex, lastIndex, visitedNames, visitedPeople)
-  clusterSizes = Map.put(clusterSizes, size, Map.get(clusterSizes, size, 0) + 1)
-  {clusterSizes, visitedNames, visitedPeople}
+{clusters, _, _} = Enum.reduce(allNames, {clusters, vNames, vPeople}, fn(name, {clusters, vNames, vPeople}) ->
+  {size, vNames, vPeople} = Name.visit(name, firsts, lasts, vNames, vPeople)
+  clusters = Map.put(clusters, size, Map.get(clusters, size, 0) + 1)
+  {clusters, vNames, vPeople}
 end)
 
-Enum.each(clusterSizes, fn({size, count}) ->
+Enum.each(clusters, fn({size, count}) ->
   if (size > 0) do
     IO.puts "#{size}: #{count}"
   end
