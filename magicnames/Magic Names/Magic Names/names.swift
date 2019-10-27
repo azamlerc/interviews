@@ -6,9 +6,8 @@
 //  Copyright © 2019 Andrew Zamler-Carhart. All rights reserved.
 //
 
-import Foundation
-
-let nameStrings = [
+/*
+ let nameStrings = [
     ["Aaron", "Wilson"],
     ["Abhishek", "Sarihan"],
     ["Abigail", "Watson"],
@@ -452,3 +451,4 @@ let nameStrings = [
     ["Zvi", "Band"]
 ]
 
+*/

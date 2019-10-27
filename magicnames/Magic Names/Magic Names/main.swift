@@ -18,7 +18,7 @@ import Foundation
 
 let minMagic = 1
 
-class Name {
+class Name: Equatable {
     static var nameIndex = [String:Name]()
 
     var name: String
@@ -39,6 +39,10 @@ class Name {
             nameIndex[value] = name
             return name
         }
+    }
+
+    static func == (lhs: Name, rhs: Name) -> Bool {
+        return lhs.name == rhs.name
     }
 
     func firstNames() -> String {
@@ -66,10 +70,10 @@ class Name {
             if (!person.visited) {
                 person.visited = true
                 count += 1
-                if (person.first.name != name) {
+                if (person.first != self) {
                     count += person.first.countPeople()
                 }
-                if (person.last.name != name) {
+                if (person.last != self) {
                     count += person.last.countPeople()
                 }
             }
@@ -77,24 +81,24 @@ class Name {
         return count
     }
 
-    func longestChain() -> [Name] {
+    func longestChain(depth: Int) -> [Name] {
+        if depth > 30 {
+            return []
+        }
         if let value = chain {
             return value
         } else {
             if firsts.count > 0 {
-                chain = [self] + firsts
-                    .map { $0.last.longestChain() }
-                    .sorted { $1.count > $0.count }[0]
+                chain = [self] + firsts.map {
+                        let longest = $0.last.longestChain(depth: depth + 1)
+                        return longest.contains(self) ? [] : longest
+                    }.sorted { $0.count > $1.count }[0]
             } else {
                 chain = [self]
             }
 
             return chain!
         }
-    }
-    
-    func chainString() -> String {
-        return chain!.map { name in name.name }.joined(separator: " ")
     }
 }
 
@@ -142,57 +146,57 @@ func loadEveryone(path: String) {
     Person.loadPeople(nameStrings)
 }
 
-Person.loadPeople(nameStrings)
-// loadEveryone(path: "/Users/andrew.zc/Library/Mobile Documents/com~apple~CloudDocs/Documents/Compass/Compass Names.txt")
-
+let path = "/Users/andrew/Projects/interviews/magicnames/Magic Names/Magic Names/compass.txt"
+// let path = "/Users/andrew/Projects/interviews/magicnames/Magic Names/Magic Names/engineering.txt"
+loadEveryone(path: path)
 
 var names = Array(Name.nameIndex.values)
 
-print("Top first names:")
-names
-    .filter { _ in true } // TODO: find top first names
-    .sorted { $0.firsts.count > $1.firsts.count }[0...4]
-    .forEach { print($0.name, "-", $0.lastNames()) }
-
-print("\nTop last names:")
-names
-    .filter { _ in true } // TODO: find top last names
-    .sorted { $0.lasts.count > $1.lasts.count }[0...4]
-    .forEach { print($0.name, "-", $0.firstNames()) }
-
-print("\nMagic names:")
-names
-    .filter { _ in true } // TODO: find magic names
-    .filter { $0.isMagic() }
-    .sorted { $0.totalCount() > $1.totalCount() }
-    .forEach { print($0.name, "-", $0.lastNames(), "/", $0.firstNames()) }
-
-print("\nMagic people:")
-Person.people
-    .filter { _ in true } // TODO: find magic people
-    .filter { $0.isMagic() }
-    .forEach { print($0.first.name, $0.last.name) }
-
-print("\nSame first and last name:")
-Person.people
-    .filter { $0.first.name == $0.last.name }
-    .forEach { print($0.first.name, $0.last.name) }
-
-print("\nMost connected:")
-Person.people
-    .sorted { $0.totalCount() > $1.totalCount() }[0...9]
-    .forEach { print($0.first.name, $0.last.name, "-", $0.totalCount()) }
-
-print("\nPeople with same name:")
-var fullnames = Set<String>()
-Person.people.forEach { person in
-    let fullname = "\(person.first.name) \(person.last.name)"
-    if fullnames.contains(fullname) {
-        print(fullname)
-    } else {
-        fullnames.insert(fullname)
-    }
-}
+//print("Top first names:")
+//names
+//    .filter { _ in true } // TODO: find top first names
+//    .sorted { $0.firsts.count > $1.firsts.count }[0...4]
+//    .forEach { print($0.name, "-", $0.lastNames()) }
+//
+//print("\nTop last names:")
+//names
+//    .filter { _ in true } // TODO: find top last names
+//    .sorted { $0.lasts.count > $1.lasts.count }[0...4]
+//    .forEach { print($0.name, "-", $0.firstNames()) }
+//
+//print("\nMagic names:")
+//names
+//    .filter { _ in true } // TODO: find magic names
+//    .filter { $0.isMagic() }
+//    .sorted { $0.totalCount() > $1.totalCount() }
+//    .forEach { print($0.name, "-", $0.lastNames(), "/", $0.firstNames()) }
+//
+//print("\nMagic people:")
+//Person.people
+//    .filter { _ in true } // TODO: find magic people
+//    .filter { $0.isMagic() }
+//    .forEach { print($0.first.name, $0.last.name) }
+//
+//print("\nSame first and last name:")
+//Person.people
+//    .filter { $0.first.name == $0.last.name }
+//    .forEach { print($0.first.name, $0.last.name) }
+//
+//print("\nMost connected:")
+//Person.people
+//    .sorted { $0.totalCount() > $1.totalCount() }[0...9]
+//    .forEach { print($0.first.name, $0.last.name, "-", $0.totalCount()) }
+//
+//print("\nPeople with same name:")
+//var fullnames = Set<String>()
+//Person.people.forEach { person in
+//    let fullname = "\(person.first.name) \(person.last.name)"
+//    if fullnames.contains(fullname) {
+//        print(fullname)
+//    } else {
+//        fullnames.insert(fullname)
+//    }
+//}
 
 print("\nCluster sizes:")
 var clusterSizes = [Int:Int]() // TODO: update clusterSizes
@@ -206,12 +210,16 @@ for cluster in Array(clusterSizes.keys).sorted() {
 }
 
 print("\nLongest chain:")
-names
-    .forEach { _ = $0.longestChain() }
-    .sorted { $0.chain!.count > $1.chain!.count }
-    .filter { $0.lasts.count == 0 }[0...19]
-    .forEach { print( $0.chainString())}
+var chains = [[Name]]()
+for _ in 0...9 {
+    names.shuffle()
+    names.forEach { $0.chain = nil }
+    names.forEach { _ = $0.longestChain(depth: 0) }
+    names.sorted { $0.chain!.count > $1.chain!.count }
+        .filter { $0.lasts.count == 0 }[0...1]
+        .forEach { chains.append($0.chain!) }
+}
 
-print(Name.getName("Rich").chainString())
-print(Name.getName("Nathan").chainString())
-print(Name.getName("Felix").chainString())
+chains
+    .sorted { $0.count > $1.count }[0...9]
+    .forEach { print( $0.count, "-", $0.map { name in name.name }.joined(separator: " ")) }

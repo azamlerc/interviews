@@ -9,7 +9,7 @@
 // 4. Which "magic" people have a first name that is someone's last name, and a last name that is someone's first name?
 
 // 5. People are in a group if their names are connected in some way. For example, Landin King, Roger King, and Roger Geng are in a group of 3 people. Print the number of groups of each size.
-  
+
 // 6. Do the results change if you add your name to the list?
 
 // Diagram: https://andrewzc.net/interviews/names.pdf
@@ -244,7 +244,7 @@ val nameStrings = listOf(
   listOf("Kim", "Nguyen"),
   listOf("Ksenia", "Coulter"),
   listOf("Kyle", "Rocco"),
-  listOf("Kyler", "Cameron"), 
+  listOf("Kyler", "Cameron"),
   listOf("Lan", "Jiang"),
   listOf("Landin", "King"),
   listOf("Lauren", "Jones"),
@@ -419,7 +419,7 @@ val nameStrings = listOf(
   listOf("Victor", "Zhu"),
   listOf("Vincent", "Vuong"),
   listOf("Vivian", "Wong"),
-  listOf("Warren", "Miller"), 
+  listOf("Warren", "Miller"),
   listOf("Wei", "Su"),
   listOf("Wei", "Wang"),
   listOf("Wen", "Ye"),
@@ -459,12 +459,12 @@ val nameStrings = listOf(
 
 class Name {
   static var nameIndex = [String:Name]()
-  
+
   var name: String
   var firsts = [Person]()
   var lasts = [Person]()
   var visited = false
-  
+
   init(name: String) {
     self.name = name
   }
@@ -507,7 +507,7 @@ class Name {
       }
     }
     return count
-  } 
+  }
 }
 
 class Person {
@@ -516,12 +516,12 @@ class Person {
   var first: Name
   var last: Name
   var visited = false
-  
+
   init(first: Name, last: Name) {
     self.first = first
     self.last = last
   }
-  
+
   static fun loadPeople(_ nameStrings: [[String]]) {
     nameStrings.forEach {
       let first = Name.getName($0[0])
