@@ -8,13 +8,16 @@
 (defn round [d] (Double/parseDouble (format "%.6f" d)))
 
 (defn combine [fa fb]
-  (sort (distinct (flatten (for [a fa b fb] (list 
-    (+ a b) (- a b) (- b a) (* a b)
-    (if (> b 0) (round (/ a b)) (list))
-    (if (> a 0) (round (/ b a)) (list))))))))
-
+  (->> (for [a fa b fb] 
+    [(+ a b) (- a b) (- b a) (* a b)
+      (if (> b 0) (round (/ a b)) [])
+      (if (> a 0) (round (/ b a)) [])])
+  (flatten)
+  (distinct)
+  (sort)))
+	
 (defn four-fours []
-  (def f1 (list 0.4 2.0 4.0 24.0))
+  (def f1 [0.4 2.0 4.0 24.0])
   (def f2 (combine f1 f1))
   (def f3 (combine f1 f2))
   (def f4 (set (concat (combine f1 f3) (combine f2 f2))))
@@ -25,6 +28,6 @@
   (prn "3 fours" f3) (prn)
   (prn "4 fours" found) (prn)
   (prn "missing" missing) (prn)
-  (if (= missing (list 73 77 81 87 93 99)) (prn "Success!")))
+  (if (= missing [73 77 81 87 93 99]) (prn "Success!")))
 
 (four-fours)
