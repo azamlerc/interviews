@@ -66,8 +66,7 @@
   (def min-index (min start end))
   (def max-index (max start end)) 
   (def subway-times (for [i (range min-index max-index)]  
-    (+ (subway-time (nth line i) (nth line (+ i 1))) dwell-time)
-  ))
+    (+ (subway-time (nth line i) (nth line (+ i 1))) dwell-time)))
   (- (+ entry-time (reduce + subway-times) exit-time) dwell-time))
 
 (defn index-of-nearest-station [line point]
