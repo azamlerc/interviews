@@ -3,6 +3,7 @@
 Fun interview questions in various languages:
 
 - C++
+- Clojure
 - Elixir
 - Go
 - Java
