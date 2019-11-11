@@ -96,6 +96,6 @@
   (->> listings 
     (map #(merge % (best-itinerary (get % :point) compass)))
     (sort-by :time)
-    (run! prn)))
+    (run! println)))
 
 (sort-listings)
