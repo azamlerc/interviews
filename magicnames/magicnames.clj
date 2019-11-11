@@ -460,13 +460,13 @@
   (def last-name (last person))
   (def first-names (conj (or (get firsts last-name) []) first-name))
   (assoc firsts last-name first-names)) {} people))
-  
+
 (def lasts-index (reduce (fn [lasts person]
   (def first-name (first person))
   (def last-name (last person))
   (def last-names (conj (or (get lasts first-name) []) last-name))
   (assoc lasts first-name last-names)) {} people))
-  
+
 (def first-names (sort (keys lasts-index)))
 (def last-names (sort (keys firsts-index)))
 (def firsts-set (set first-names))
@@ -475,46 +475,75 @@
 
 (defn name-string [index value] (clojure.string/join ", " (get index value)))
 (defn name-count [index value] (count (get index value)))
-(defn total-count [firsts-index lasts-index value]
+(defn total-count [value]
   (+ (name-count firsts-index value) (name-count lasts-index value)))
-(defn magic-name? [firsts-set lasts-set value]
-  (and (contains? (set firsts-set) value) 
+
+(defn magic-name? [value]
+  (and (contains? (set firsts-set) value)
        (contains? (set lasts-set) value)))
-(defn magic-person? [firsts-set lasts-set person]
-  (and (contains? lasts-set (first person)) 
+
+(defn magic-person? [person]
+  (and (contains? lasts-set (first person))
        (contains? firsts-set (last person))))
 
-(prn "Top first names:")
-(->> first-names 
+(println "Top first names:")
+(->> first-names
   (sort #(compare (name-count lasts-index %2)
                   (name-count lasts-index %1)))
   (take 5)
   (map #(str % " - " (name-string lasts-index %)))
-  (run! prn))
+  (run! println))
 
-(prn)
-(prn "Top last names:")
-(->> last-names 
+(println)
+(println "Top last names:")
+(->> last-names
   (sort #(compare (name-count firsts-index %2)
                   (name-count firsts-index %1)))
   (take 5)
   (map #(str % " - " (name-string firsts-index %)))
-  (run! prn))
+  (run! println))
 
-(prn)
-(prn "Magic names:")
-(->> all-names 
-  (filter #(magic-name? firsts-set lasts-set %))
-  (sort #(> (total-count firsts-index lasts-index %1)
-            (total-count firsts-index lasts-index %2)))
+(println)
+(println "Magic names:")
+(->> all-names
+  (filter #(magic-name? %))
+  (sort #(> (total-count %1)
+            (total-count %2)))
   (map #(str % " - " (name-string firsts-index %)
                " / " (name-string lasts-index %)))
-  (run! prn))
+  (run! println))
 
-(prn)
-(prn "Magic people:")
-(->> people 
-  (filter #(magic-person? firsts-set lasts-set %))
+(println)
+(println "Magic people:")
+(->> people
+  (filter #(magic-person? %))
   (map #(str (first %) " " (last %)))
-  (run! prn))
+  (run! println))
 
+(def visited-names #{})
+(def visited-people #{})
+
+(defn people-with-name [value]
+  (concat (map #(do [% value]) (or (get firsts-index value) []))
+          (map #(do [value %]) (or (get lasts-index value) []))))
+
+(declare visit-person)
+
+(defn visit-name [value]
+  (if (contains? visited-names value) 0 (do
+    (alter-var-root #'visited-names #(conj % value))
+    (reduce #(+ %1 (visit-person %2)) 0 (people-with-name value)))))
+
+(defn visit-person [person]
+  (if (contains? visited-people person) 0 (do
+    (alter-var-root #'visited-people #(conj % person))
+    (+ 1 (visit-name (first person)) (visit-name (last person))))))
+
+(println)
+(println "Cluster sizes:")
+(def clusters (reduce #(update %1 (visit-name %2) (fnil inc 0)) {} all-names))
+(->> (keys clusters)
+  (filter pos?)
+  (sort)
+  (map #(str % ": " (get clusters %)))
+  (run! println))
