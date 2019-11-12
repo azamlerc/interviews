@@ -537,7 +537,7 @@
 (defn visit-person [person]
   (if (contains? visited-people person) 0 (do
     (alter-var-root #'visited-people #(conj % person))
-    (+ 1 (visit-name (first person)) (visit-name (last person))))))
+    (inc (visit-name (first person)) (visit-name (last person))))))
 
 (println)
 (println "Cluster sizes:")
