@@ -63,11 +63,12 @@
   (-> (+ (* dx dx) (* dy dy)) (Math/sqrt) (/ subway-speed) (* 60.0)))
 
 (defn subway-journey-time [line start end] 
-  (def min-index (min start end))
-  (def max-index (max start end)) 
-  (def subway-times (for [i (range min-index max-index)]  
-    (+ (subway-time (line i) (line (inc i))) dwell-time)))
-  (- (+ entry-time (reduce + subway-times) exit-time) dwell-time))
+  (->> (subvec line (min start end) (inc (max start end)))
+    (partition 2 1)
+    (map #(subway-time (first %) (second %)))
+    (map #(+ % dwell-time))
+    (reduce + (- dwell-time))
+    (+ entry-time exit-time)))
 
 (defn index-of-nearest-station [line point]
   (def times (map #(walking-time % point) line))
