@@ -1,6 +1,6 @@
 ;; Write a program to calculate the time that it would take to commute from an apartment to the Compass office using the New York City Subway. You can walk to a station, take a train to another station, and from there walk to the office. You cannot transfer between trains.
 
-;; Take a section of the Manhattan street grid bounded by Ave A to 11 Av, and Houston St to 59 St. We can express coordinates as {blocks west of Ave A, blocks north of Houston}. For example, the coordinates for the Compass office are {5,14} because it is at the intersection of 5 Av and 14 St. 
+;; Take a section of the Manhattan street grid bounded by Ave A to 11 Av, and Houston St to 59 St. We can express coordinates as {blocks west of Ave A, blocks north of Houston}. For example, the coordinates for the Compass office are {5,14} because it is at the intersection of 5 Av and 14 St.
 
 ;; Visualization:
 ;; https://andrewzc.net/subway.html
@@ -46,23 +46,23 @@
 
 (defn round [d] (Double/parseDouble (format "%.2f" d)))
 
-(defn avenue-distance [p1 p2] 
+(defn avenue-distance [p1 p2]
   (-> (- (first p1) (first p2)) (Math/abs) (* avenue-block)))
 
-(defn street-distance [p1 p2] 
+(defn street-distance [p1 p2]
   (-> (- (second p1) (second p2)) (Math/abs) (* street-block)))
 
-(defn walking-time [p1 p2] 
-  (def dx (avenue-distance p1 p2))
-  (def dy (street-distance p1 p2))
-  (-> (+ dx dy) (/ walking-speed) (* 60.0)))
+(defn walking-time [p1 p2]
+  (let [dx (avenue-distance p1 p2)
+        dy (street-distance p1 p2)]
+  (-> (+ dx dy) (/ walking-speed) (* 60.0))))
 
-(defn subway-time [p1 p2] 
-  (def dx (avenue-distance p1 p2))
-  (def dy (street-distance p1 p2))
-  (-> (+ (* dx dx) (* dy dy)) (Math/sqrt) (/ subway-speed) (* 60.0)))
+(defn subway-time [p1 p2]
+  (let [dx (avenue-distance p1 p2)
+        dy (street-distance p1 p2)]
+  (-> (+ (* dx dx) (* dy dy)) (Math/sqrt) (/ subway-speed) (* 60.0))))
 
-(defn subway-journey-time [line start end] 
+(defn subway-journey-time [line start end]
   (->> (subvec line (min start end) (inc (max start end)))
     (partition 2 1)
     (map #(subway-time (first %) (second %)))
@@ -71,32 +71,35 @@
     (+ entry-time exit-time)))
 
 (defn index-of-nearest-station [line point]
-  (def times (map #(walking-time % point) line))
-  (def indexed-times (map-indexed (fn [i t] [i t]) times))
-  (first (reduce #(if (< (second %1) (second %2)) %1 %2) indexed-times)))
+  (let [
+    times (map #(walking-time % point) line)
+    indexed-times (map-indexed (fn [i t] [i t]) times)]
+  (first (reduce #(if (< (second %1) (second %2)) %1 %2) indexed-times))))
 
 (defn calculate-itinerary [line-name home office]
-  (def line (get lines line-name))
-  (def start-index (index-of-nearest-station line home))
-  (def end-index (index-of-nearest-station line office))
-  (def start-station (line start-index))
-  (def end-station (line end-index))
-  (def walk1 (walking-time home start-station))
-  (def train (subway-journey-time line start-index end-index))
-  (def walk2 (walking-time end-station office))
-  (def total-time (round (+ walk1 train walk2)))
-  {:line line-name :start start-station :end end-station :time total-time})
+  (let [
+    line (get lines line-name)
+    start-index (index-of-nearest-station line home)
+    end-index (index-of-nearest-station line office)
+    start-station (line start-index)
+    end-station (line end-index)
+    walk1 (walking-time home start-station)
+    train (subway-journey-time line start-index end-index)
+    walk2 (walking-time end-station office)
+    total-time (round (+ walk1 train walk2))]
+  {:line line-name :start start-station :end end-station :time total-time}))
 
 (defn best-itinerary [home office]
-  (def walk {:time (walking-time home office)})
-  (def itineraries (map (fn [[line-name line]] 
-    (calculate-itinerary line-name home office)) lines))
-  (reduce #(if (< (get %1 :time) (get %2 :time)) %1 %2) walk itineraries))
+  (let [
+    walk {:time (walking-time home office)}
+    itineraries (map (fn [[line-name line]]
+      (calculate-itinerary line-name home office)) lines)]
+  (reduce #(if (< (get %1 :time) (get %2 :time)) %1 %2) walk itineraries)))
 
-(defn sort-listings [] 
-  (->> listings 
+(defn sort-listings []
+  (->> listings
     (map #(merge % (best-itinerary (get % :point) compass)))
     (sort-by :time)
-    (run! println)))
+    (run! #(println (:name %) "-" (if (nil? (:line %)) "just walk" (str (:line %) " train from " (:start %) " to " (:end %))) "-"(:time %) "min"))))
 
 (sort-listings)
