@@ -456,16 +456,18 @@
 ])
 
 (def firsts-index (reduce (fn [firsts person]
-  (def first-name (first person))
-  (def last-name (last person))
-  (def first-names (conj (or (get firsts last-name) []) first-name))
-  (assoc firsts last-name first-names)) {} people))
+  (let [
+    first-name (first person)
+    last-name (last person)
+    first-names (conj (or (get firsts last-name) []) first-name)]
+  (assoc firsts last-name first-names))) {} people))
 
 (def lasts-index (reduce (fn [lasts person]
-  (def first-name (first person))
-  (def last-name (last person))
-  (def last-names (conj (or (get lasts first-name) []) last-name))
-  (assoc lasts first-name last-names)) {} people))
+  (let [
+    first-name (first person)
+    last-name (last person)
+    last-names (conj (or (get lasts first-name) []) last-name)]
+  (assoc lasts first-name last-names))) {} people))
 
 (def first-names (sort (keys lasts-index)))
 (def last-names (sort (keys firsts-index)))
@@ -494,8 +496,7 @@
   (map #(str % " - " (name-string lasts-index %)))
   (run! println))
 
-(println)
-(println "Top last names:")
+(println "\nTop last names:")
 (->> last-names
   (sort #(compare (name-count firsts-index %2)
                   (name-count firsts-index %1)))
@@ -503,8 +504,7 @@
   (map #(str % " - " (name-string firsts-index %)))
   (run! println))
 
-(println)
-(println "Magic names:")
+(println "\nMagic names:")
 (->> all-names
   (filter #(magic-name? %))
   (sort #(> (total-count %1)
@@ -513,8 +513,7 @@
                " / " (name-string lasts-index %)))
   (run! println))
 
-(println)
-(println "Magic people:")
+(println "\nMagic people:")
 (->> people
   (filter #(magic-person? %))
   (map #(str (first %) " " (last %)))
@@ -537,10 +536,9 @@
 (defn visit-person [person]
   (if (contains? visited-people person) 0 (do
     (alter-var-root #'visited-people #(conj % person))
-    (inc (visit-name (first person)) (visit-name (last person))))))
+    (+ 1 (visit-name (first person)) (visit-name (last person))))))
 
-(println)
-(println "Cluster sizes:")
+(println "\nCluster sizes:")
 (def clusters (reduce #(update %1 (visit-name %2) (fnil inc 0)) {} all-names))
 (->> (keys clusters)
   (filter pos?)
