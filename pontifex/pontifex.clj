@@ -1,11 +1,13 @@
-;; This program implements the Solitaire encryption algorithm as described in
-;; the appendix of the book Cryptonomicon by Neal Stephenson:
+;; This program implements the Solitaire encryption algorithm
+;; as described in the appendix of the book Cryptonomicon by
+;; Neal Stephenson:
 
 ;; https://www.schneier.com/academic/solitaire/
 
-;; Solitaire is a cyper that can be performed using a deck of playing cards.
-;; If two people each have a deck of playing cards in the same order, each
-;; can generate a keystream that can be used to encypher and decypher a message.
+;; Solitaire is a cyper that can be performed using a deck of
+;; playing cards. If two people each have a deck of playing
+;; cards in the same order, each can generate a keystream that
+;; can be used to encypher and decypher a message.
 
 ;; Basic Functions
 
@@ -18,10 +20,8 @@
 
 (defn letter [number] (char (+ (modulo number 26) 64)))
 (defn number [letter] (- (int letter) 64))
-
 (defn addLetters [a b] (letter (+ (number a) (number b))))
 (defn subtractLetters [a b] (letter (- (number a) (number b))))
-
 (defn addStrings [a b] (apply str (map addLetters a b)))
 (defn subtractStrings [a b] (apply str (map subtractLetters a b)))
 
@@ -42,7 +42,6 @@
   (xPad)))
 
 (defn aaaaa [length] (apply str (repeat length "A")))
-
 (defn example [length] (subs (apply str (repeat (int (Math/ceil (/ length 10))) "KDWUPONOWT")) 0 length))
 
 (defn encrypt [plain generator] (def string (pretty plain))
