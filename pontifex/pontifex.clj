@@ -1,3 +1,7 @@
+;; This program implements the Solitaire encryption algorithm as described in the appendix of Cryptonomicon by Neal Stephenson: https://www.schneier.com/academic/solitaire/
+
+;; Solitaire is a cyper that can be performed using a deck of playing cards. If two people each have a deck of playing cards in the same order, each can generate a keystream that can be used to encypher and decypher a message.
+
 ;; Basic Functions
 
 (defn blocks [string] (clojure.string/join " "
@@ -16,15 +20,21 @@
 (defn addStrings [a b] (apply str (map addLetters a b)))
 (defn subtractStrings [a b] (apply str (map subtractLetters a b)))
 
-(defn numbersToWords [string] (clojure.string/replace string #"0|1|2|3|4|5|6|7|8|9" {"0" "ZERO" "1" "ONE" "2" "TWO" "3" "THREE" "4" "FOUR" "5" "FIVE" "6" "SIX" "7" "SEVEN" "8" "EIGHT" "9" "NINE"}))
+(defn numbersToWords [string] (clojure.string/replace string #"0|1|2|3|4|5|6|7|8|9"
+  {"0" "ZERO" "1" "ONE" "2" "TWO" "3" "THREE" "4" "FOUR"
+   "5" "FIVE" "6" "SIX" "7" "SEVEN" "8" "EIGHT" "9" "NINE"}))
 
 (defn xPad [string] (if (> (mod (count string) 5) 0)
   (xPad (str string "X")) string))
 
 ;; Crypt
 
-(defn pretty [string] (xPad (apply str (filter #(Character/isLetter %)
-  (clojure.string/upper-case (numbersToWords string))))))
+(defn pretty [string] (->> string
+  (numbersToWords)
+  (clojure.string/upper-case)
+  (filter #(Character/isLetter %))
+  (apply str)
+  (xPad)))
 
 (defn aaaaa [length] (apply str (repeat length "A")))
 
@@ -93,11 +103,11 @@
           (subvec d index1 (inc index2)) 
           (subvec d 0 index1))))
 
-(defn play [deck] (let [shuffled (->> deck 
+(defn play [deck] (def shuffled (->> deck
   (moveDown jokerA 1)
   (moveDown jokerB 2)
-  (tripleCut jokerA jokerB))] 
-  (cut (cardNumber (last shuffled)) shuffled)))
+  (tripleCut jokerA jokerB)))
+  (cut (cardNumber (last shuffled)) shuffled))
 
 (defn keystream [length string deck] (let [
   newDeck (play deck)                                           
@@ -140,7 +150,8 @@
              (:pretty item)) (str "pretty " (:plain item)))
   (assert (= (blocks (encrypt (:plain item) (:generator item))) 
              (:encrypted item)) (str "encrypted " (:plain item)))
-  (assert (= (blocks (decrypt (encrypt (:plain item) (:generator item)) (:generator item))) 
+  (assert (= (blocks (decrypt (encrypt (:plain item)
+               (:generator item)) (:generator item)))
              (:pretty item)) (str "decrypted " (:plain item))))
   
 (println "All tests passed!")
