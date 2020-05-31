@@ -1,12 +1,12 @@
-// This program implements the Solitaire encryption algorithm 
-// as described in the appendix of the book Cryptonomicon by 
+// This program implements the Solitaire encryption algorithm
+// as described in the appendix of the book Cryptonomicon by
 // Neal Stephenson:
 
 // https://www.schneier.com/academic/solitaire/
 
-// Solitaire is a cyper that can be performed using a deck of 
-// playing cards. If two people each have a deck of playing 
-// cards in the same order, each can generate a keystream that 
+// Solitaire is a cyper that can be performed using a deck of
+// playing cards. If two people each have a deck of playing
+// cards in the same order, each can generate a keystream that
 // can be used to encypher and decypher a message.
 
 let modulo = (n) => n < 1 ? modulo(n + 26) : (n - 1) % 26 + 1;
@@ -16,7 +16,7 @@ let range = (n) => Array.from(new Array(n), (x,i) => i + 1);
 let zipMap = (a, b, func) => a.map((x, i) => func(x, b[i]));
 let squareMap = (a, b, func) => a.map((x) => b.map((y) => func(x, y)));
 let addLetters = (a, b) => charValue(numVal(a) + numVal(b));
-let subLetters = (a, b) => charValue(numVal(a) - numVal(b));  
+let subLetters = (a, b) => charValue(numVal(a) - numVal(b));
 let addStrings = (a, b) => zipMap([...a], [...b], addLetters).join("");
 let subStrings = (a, b) => zipMap([...a], [...b], subLetters).join("");
 let xPad = (s) => (s.length % 5) ? xPad(s + "X") : s;
@@ -24,7 +24,7 @@ let pretty = (s) => xPad(s.toUpperCase().replace(/[^a-zA-Z]/g, ""));
 let chunks = (s) => s.match(/.{1,5}/g).join(" ");
 let aaaaa = (n) => "A".repeat(n);
 let example = (n) => "KDWUPONOWT".repeat(n / 10 + 1).substring(0, n);
-let assert = (type, a, b) => console.log(`${type}: ${a === b ? "pass" : 
+let assert = (type, a, b) => console.log(`${type}: ${a === b ? "pass" :
     "fail"} (${a}${a !== b ? " / " + b : ""})`);
 
 // CRYPT
@@ -122,7 +122,7 @@ function solitaire(n, phrase = null) {
     if (letter === null) continue;
     result += letter;
   }
-  
+
   return result;
 }
 
