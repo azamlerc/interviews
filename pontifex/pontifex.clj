@@ -140,8 +140,7 @@
              (:pretty item)) (str "pretty " (:plain item)))
   (assert (= (blocks (encrypt (:plain item) (:generator item))) 
              (:encrypted item)) (str "encrypted " (:plain item)))
-  (assert (= (blocks (decrypt (encrypt (:plain item)
-               (:generator item)) (:generator item))) 
+  (assert (= (blocks (decrypt (encrypt (:plain item) (:generator item)) (:generator item))) 
              (:pretty item)) (str "decrypted " (:plain item))))
   
 (println "All tests passed!")
