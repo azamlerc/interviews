@@ -4,7 +4,7 @@
 
 // https://www.schneier.com/academic/solitaire/
 
-// Solitaire is a cyper that can be performed using a deck of
+// Solitaire is a cypher that can be performed using a deck of
 // playing cards. If two people each have a deck of playing
 // cards in the same order, each can generate a keystream that
 // can be used to encypher and decypher a message.
