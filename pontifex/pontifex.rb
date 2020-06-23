@@ -12,9 +12,7 @@
 class Integer
   def charValue()
     value = self
-    while value < 1
-      value += 26
-    end
+    value += 26 while value < 1
     value = (value - 1) % 26 + 1
     return (value + 64).chr
   end

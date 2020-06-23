@@ -556,7 +556,7 @@ people
   .each { |name| puts "#{name.first.name} #{name.last.name }" }
 
 puts "\nCluster sizes:"
-clusterSizes = Hash.new { |hash,key| hash[key] = 0 }
+clusterSizes = Hash.new(0)
 # TODO update clusterSizes
 names.each do |name|
   count = name.countPeople
