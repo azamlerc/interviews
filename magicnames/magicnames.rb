@@ -9,7 +9,7 @@
 # 4. Which "magic" people have a first name that is someone's last name, and a last name that is someone's first name?
 
 # 5. People are in a group if their names are connected in some way. For example, Landin King, Roger King, and Roger Geng are in a group of 3 people. Print the number of groups of each size.
-  
+
 # 6. Do the results change if you add your name to the list?
 
 # Diagram: https://andrewzc.net/interviews/names.pdf
@@ -245,7 +245,7 @@ nameStrings = [
   ["Kim", "Nguyen"],
   ["Ksenia", "Coulter"],
   ["Kyle", "Rocco"],
-  ["Kyler", "Cameron"], 
+  ["Kyler", "Cameron"],
   ["Lan", "Jiang"],
   ["Landin", "King"],
   ["Lauren", "Jones"],
@@ -420,7 +420,7 @@ nameStrings = [
   ["Victor", "Zhu"],
   ["Vincent", "Vuong"],
   ["Vivian", "Wong"],
-  ["Warren", "Miller"], 
+  ["Warren", "Miller"],
   ["Wei", "Su"],
   ["Wei", "Wang"],
   ["Wen", "Ye"],
@@ -457,13 +457,13 @@ nameStrings = [
   ["Zoey", "Sun"],
   ["Zvi", "Band"]
 ]
- 
+
 class Name
   attr_accessor :name
   attr_accessor :firsts
   attr_accessor :lasts
   attr_accessor :visited
-  
+
   def initialize(name)
     @name = name
     @firsts = []
@@ -472,33 +472,25 @@ class Name
   end
 
   def firstNames
-    return lasts.map { |name| name.first.name}.join(", ")
+    return @lasts.map { |name| name.first.name}.join(", ")
   end
 
   def lastNames
-    return firsts.map { |name| name.last.name}.join(", ")
+    return @firsts.map { |name| name.last.name}.join(", ")
   end
 
   def isMagic
-    return firsts.count > 0 && lasts.count > 0
+    return @firsts.count > 0 && @lasts.count > 0
   end
 
   def totalCount
-    return firsts.count + lasts.count
+    return @firsts.count + @lasts.count
   end
 
   def countPeople()
-    count = 0
-    visited = true
-    (firsts + lasts).each { |person|
-      if !person.visited
-        person.visited = true
-        count += 1 +
-          person.first.countPeople() +
-          person.last.countPeople()
-      end
-    }
-    return count
+    return 0 if @visited
+    @visited = true
+    return (firsts + lasts).reduce(0) { |t,p| t += p.countNames }
   end
 end
 
@@ -506,15 +498,21 @@ class Person
   attr_accessor :first
   attr_accessor :last
   attr_accessor :visited
-  
+
   def initialize(first, last)
     @first = first
     @last = last
     @visited = false
   end
-  
+
   def isMagic
-    return first.lasts.length > 0 && last.firsts.length > 0
+    return @first.lasts.length > 0 && @last.firsts.length > 0
+  end
+
+  def countNames()
+    return 0 if @visited
+    @visited = true
+    return @first.countPeople + @last.countPeople + 1
   end
 end
 
@@ -536,35 +534,34 @@ puts "Top first names:"
 names
   .filter { |name| true } # TODO: find top first names
   .sort { |n1,n2| n2.firsts.count <=> n1.firsts.count }[0,5]
-  .each { |name| puts "#{name.name} - #{name.lastNames()}" }
+  .each { |name| puts "#{name.name} - #{name.lastNames }" }
 
 puts "\nTop last names:"
 names
   .filter { |name| true } # TODO: find top first names
   .sort { |n1,n2| n2.lasts.count <=> n1.lasts.count }[0,5]
-  .each { |name| puts "#{name.name} - #{name.firstNames()}" }
+  .each { |name| puts "#{name.name} - #{name.firstNames }" }
 
 puts "\nMagic names:"
 names
   .filter { |name| true } # TODO: find magic names
-  .filter { |name| name.isMagic() }
-  .sort { |n1,n2| n2.totalCount() <=> n1.totalCount() }
-  .each { |name| puts "#{name.name} - #{name.firstNames()} / #{name.lastNames()}" }
+  .filter { |name| name.isMagic }
+  .sort { |n1,n2| n2.totalCount <=> n1.totalCount }
+  .each { |name| puts "#{name.name} - #{name.firstNames } / #{name.lastNames}" }
 
 puts "\nMagic people:"
 people
   .filter { |person| true } # TODO: find magic people
-  .filter { |person| person.isMagic() }
-  .each { |name| puts "#{name.first.name} #{name.last.name}" }
+  .filter { |person| person.isMagic }
+  .each { |name| puts "#{name.first.name} #{name.last.name }" }
 
 puts "\nCluster sizes:"
 clusterSizes = Hash.new { |hash,key| hash[key] = 0 }
 # TODO update clusterSizes
-names.each { |name|
-  if !name.visited
-    clusterSizes[name.countPeople()] += 1
-  end
-}
+names.each do |name|
+  count = name.countPeople
+  clusterSizes[count] += 1 if count > 0
+end
 
 clusterSizes.keys.sort.each { |cluster|
   puts "#{cluster}: #{clusterSizes[cluster]}"

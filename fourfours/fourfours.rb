@@ -11,25 +11,21 @@
 
 require 'set'
 
-def combine(fours, countA, countB) 
+def combine(fours, countA, countB)
   newSet = fours[countA + countB]
   fours[countA].each do |a|
     fours[countB].each do |b|
       newSet.add(round(a + b))
       newSet.add(round(a - b))
-      newSet.add(round(b - a))
+      newSet.add(round(b - a)) if a != b
       newSet.add(round(a * b))
-      if b != 0
-        newSet.add(round(a / b))  
-      end
-      if a != 0
-        newSet.add(round(b / a))  
-      end
+      newSet.add(round(a / b)) if b != 0
+      newSet.add(round(b / a)) if a != 0 && a != b
     end
   end
 end
 
-# Returns a list of sets of numbers that can be generated with 
+# Returns a list of sets of numbers that can be generated with
 # zero, one, two, three, or four of the number four.
 def four_fours
   fours = [
@@ -39,7 +35,7 @@ def four_fours
     Set[],
     Set[]
   ]
-  
+
   # your solution here
   # calcualte fours[2], fours[3] and fours[4]
    combine(fours, 1, 1);
@@ -51,7 +47,7 @@ def four_fours
 end
 
 # rounds the value to 6 decimal places
-def round(val) 
+def round(val)
   return val.round(6)
 end
 
@@ -60,15 +56,15 @@ def print_fours(fours)
     array = fours[i].to_a.sort
     puts "#{i} fours: #{array}\n\n"
   end
-  
+
   found = []
   missing = []
-  for i in 1..100 do 
+  for i in 1..100 do
     if fours[4].include?(i.to_f)
       found.push(i)
     elsif
       missing.push(i)
-    end      
+    end
   end
 
   puts "4 fours: #{found}\n\n"

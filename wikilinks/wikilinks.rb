@@ -425,9 +425,9 @@ class Article
     articles
       .filter { |article| article.children.count == 0 }
       .each do |article|
-        article.chain = article.findChain([]) 
+        article.chain = article.findChain([])
         depth = article.chain.count
-        article.chain.each do |a| 
+        article.chain.each do |a|
           a.maxDepth = [a.maxDepth, depth].max
         end
       end
@@ -448,11 +448,11 @@ class Article
       .sort { |a1,a2| a2.terminal <=> a1.terminal }
       .each { |article| article.printArticle(0) }
   end
-  
+
   def printArticle(depth)
-    if !self.printed 
-      puts "·" * depth + name
-      self.printed = true
+    if !@printed
+      puts "·" * depth + @name
+      @printed = true
       children
         .sort { |a1,a2| a2.maxDepth <=> a1.maxDepth }
         .each { |article| article.printArticle(depth + 1) }
