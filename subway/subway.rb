@@ -1,6 +1,6 @@
 # Write a program to calculate the time that it would take to commute from an apartment to the Compass office using the New York City Subway. You can walk to a station, take a train to another station, and from there walk to the office. You cannot transfer between trains.
 
-# Take a section of the Manhattan street grid bounded by Ave A to 11 Av, and Houston St to 59 St. We can express coordinates as (blocks west of Ave A, blocks north of Houston). For example, the coordinates for the Compass office are (5,14) because it is at the intersection of 5 Av and 14 St. 
+# Take a section of the Manhattan street grid bounded by Ave A to 11 Av, and Houston St to 59 St. We can express coordinates as (blocks west of Ave A, blocks north of Houston). For example, the coordinates for the Compass office are (5,14) because it is at the intersection of 5 Av and 14 St.
 
 # Visualization:
 # https://andrewzc.net/subway.html
@@ -9,17 +9,17 @@
 class Point
   attr_accessor :avenue
   attr_accessor :street
-  
+
   AvenueBlock = 0.17 # miles
   StreetBlock = 0.05 # miles
   WalkingSpeed = 3.0 # miles per hour
   SubwaySpeed = 17.0 # miles per hour
-  
+
   def initialize(a, s)
     @avenue = a
     @street = s
   end
-    
+
   # Returns the east/west distance in miles between two points.
   def self.avenueDistance(pointA, pointB)
     return (pointA.avenue - pointB.avenue).abs * AvenueBlock
@@ -44,8 +44,8 @@ class Point
     dy = Point.streetDistance(stationA, stationB)
     return Math.sqrt(dx * dx + dy * dy) / SubwaySpeed * 60.0
   end
-  
-  def to_s 
+
+  def to_s
     return "(#{@avenue},#{@street})"
   end
 end
@@ -62,8 +62,8 @@ class Line
   def initialize(name, points)
     @name = name
     @stations = []
-    
-    points.each do |point| 
+
+    points.each do |point|
       @stations.push(Point.new(point[0], point[1]))
     end
   end
@@ -76,7 +76,7 @@ class Line
     if startIndex > endIndex
       startIndex, endIndex = endIndex, startIndex
     end
-  
+
     for a in startIndex..endIndex-1
       b = a + 1
       time += Point.subwayTime(@stations[a], @stations[b])
@@ -111,7 +111,7 @@ class Line
 
     # Your solution here
     # Calculate the best itinerary for taking this line
-    
+
     i.lineName = @name
     startIndex = indexOfNearestStation(home)
     endIndex = indexOfNearestStation(office)
@@ -197,17 +197,15 @@ listings = {
 # Also consider that it may be faster to walk
 
 listings.each do |listing|
-  bestItinerary = Itinerary.new
-  bestItinerary.totalTime = Point.walkingTime(listing.point, compass)
-  
+  best = Itinerary.new
+  best.totalTime = Point.walkingTime(listing.point, compass)
+
   lines.each do |line|
     itinerary = line.calculateItinerary(listing.point, compass)
-    if itinerary.totalTime < bestItinerary.totalTime
-      bestItinerary = itinerary
-    end
+    best = itinerary if itinerary.totalTime < best.totalTime
   end
-  
-  listing.itinerary = bestItinerary
+
+  listing.itinerary = best
 end
 
 listings
