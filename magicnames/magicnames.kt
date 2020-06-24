@@ -242,7 +242,7 @@ val nameStrings = listOf(
   listOf("Kim", "Nguyen"),
   listOf("Ksenia", "Coulter"),
   listOf("Kyle", "Rocco"),
-  listOf("Kyler", "Cameron"), 
+  listOf("Kyler", "Cameron"),
   listOf("Lan", "Jiang"),
   listOf("Landin", "King"),
   listOf("Lauren", "Jones"),
@@ -417,7 +417,7 @@ val nameStrings = listOf(
   listOf("Victor", "Zhu"),
   listOf("Vincent", "Vuong"),
   listOf("Vivian", "Wong"),
-  listOf("Warren", "Miller"), 
+  listOf("Warren", "Miller"),
   listOf("Wei", "Su"),
   listOf("Wei", "Wang"),
   listOf("Wen", "Ye"),
@@ -459,7 +459,7 @@ class Name(name: String) {
   var name = name
   var firsts = mutableListOf<Person>()
   var lasts = mutableListOf<Person>()
-	var visited = false
+  var visited = false
 
   fun firstNames(): String {
     return lasts.map { person -> person.first.name}.joinToString()
@@ -478,29 +478,30 @@ class Name(name: String) {
   }
 
   fun countPeople(): Int {
+    if (visited) return 0
     var count = 0
     visited = true
     (firsts + lasts).forEach { person ->
-      if (!person.visited) {
-        person.visited = true
-        count += 1 +
-          person.first.countPeople() +
-          person.last.countPeople()
-      }
+      count += person.countNames()
     }
     return count
-  } 
+  }
 }
 
 class Person(first: Name, last: Name) {
   var first = first
   var last = last
-	var visited = false
-	
-	fun isMagic(): Boolean {
-	    return first.lasts.size > 0 && last.firsts.size > 0
-	  }
-	}
+  var visited = false
+
+  fun isMagic(): Boolean {
+    return first.lasts.size > 0 && last.firsts.size > 0
+  }
+
+  fun countNames(): Int {
+    if (visited) return 0
+    visited = true
+    return 1 + first.countPeople() + last.countPeople()
+  }
 }
 
 var nameIndex = mutableMapOf<String, Name>()
@@ -534,7 +535,7 @@ fun main(args: Array<String>) {
 
   println("Top first names:")
   names
-    .filter { false } // TODO: find top first names
+    .filter { true } // TODO: find top first names
     .sortedBy { it.firsts.size }
     .reversed()
     .slice(0..5)
@@ -542,7 +543,7 @@ fun main(args: Array<String>) {
 
   println("\nTop last names:")
   names
-    .filter { false } // TODO: find top last names
+    .filter { true } // TODO: find top last names
     .sortedBy { it.lasts.size }
     .reversed()
     .slice(0..5)
@@ -550,7 +551,7 @@ fun main(args: Array<String>) {
 
   println("\nMagic names:")
   names
-    .filter { false } // TODO: find magic names
+    .filter { true } // TODO: find magic names
     .filter { it.isMagic() }
     .sortedBy { it.totalCount() }
     .reversed()
@@ -558,7 +559,7 @@ fun main(args: Array<String>) {
 
   println("\nMagic people:")
   people
-    .filter { false } // TODO: find magic people
+    .filter { true } // TODO: find magic people
     .filter { it.isMagic() }
     .forEach { println(it.first.name + " " + it.last.name) }
 
@@ -571,7 +572,7 @@ fun main(args: Array<String>) {
       clusterSizes.put(size, count + 1)
     }
   }
-	
+
   for (size in clusterSizes.keys.toMutableList().sorted()) {
     val count = clusterSizes.get(size)!!
     println("$size: $count")

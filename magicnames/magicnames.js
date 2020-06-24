@@ -9,7 +9,7 @@
 // 4. Which "magic" people have a first name that is someone's last name, and a last name that is someone's first name?
 
 // 5. People are in a cluster if their names are connected in some way. For example, Landin King, Roger King, and Roger Geng are in a cluster of 3 people. Print the number of clusters of each size.
-  
+
 // 6. Do the results change if you add your name to the list?
 
 // Diagram: https://andrewzc.net/interviews/names.pdf
@@ -245,7 +245,7 @@ let nameStrings = [
   ["Kim", "Nguyen"],
   ["Ksenia", "Coulter"],
   ["Kyle", "Rocco"],
-  ["Kyler", "Cameron"], 
+  ["Kyler", "Cameron"],
   ["Lan", "Jiang"],
   ["Landin", "King"],
   ["Lauren", "Jones"],
@@ -420,7 +420,7 @@ let nameStrings = [
   ["Victor", "Zhu"],
   ["Vincent", "Vuong"],
   ["Vivian", "Wong"],
-  ["Warren", "Miller"], 
+  ["Warren", "Miller"],
   ["Wei", "Su"],
   ["Wei", "Wang"],
   ["Wen", "Ye"],
@@ -469,7 +469,7 @@ for (let strings of nameStrings) {
   let person = {first, last};
   first.firsts.push(person);
   last.lasts.push(person);
-  people.push(person);  
+  people.push(person);
 }
 names = Object.values(nameIndex);
 
@@ -497,7 +497,7 @@ names.filter((name) => {
 }).filter((name) => {
   return name.firsts.length && name.lasts.length;
 }).sort((a,b) => {
-  return (b.firsts.length + b.lasts.length) - 
+  return (b.firsts.length + b.lasts.length) -
          (a.firsts.length + a.lasts.length);
 }).forEach(name => {
   console.log(name.name, '-', getFirstNames(name), '/', getLastNames(name));
@@ -524,17 +524,16 @@ names.forEach((name) => {
 console.log(clusterSizes);
 
 function countName(name) {
-  let count = 0;
+  if (name.visited) return 0;
   name.visited = true;
-  name.firsts.concat(name.lasts).forEach(person => {
-    if (!person.visited) {
-      person.visited = true;
-      count += 1 + 
-        countName(person.first) + 
-        countName(person.last);
-    }
-  });
-  return count;
+  return name.firsts.concat(name.lasts)
+    .reduce((total, person) => total + countPerson(person), 0);
+}
+
+function countPerson(person) {
+  if (person.visited) return 0;
+  person.visited = true;
+  return 1 + countName(person.first) + countName(person.last);
 }
 
 // TODO: add your name to the list and see if the results change!

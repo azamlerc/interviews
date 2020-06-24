@@ -9,7 +9,7 @@
 // 4. Which "magic" people have a first name that is someone's last name, and a last name that is someone's first name?
 
 // 5. People are in a group if their names are connected in some way. For example, Landin King, Roger King, and Roger Geng are in a group of 3 people. Print the number of groups of each size.
-  
+
 // 6. Do the results change if you add your name to the list?
 
 // Diagram: https://andrewzc.net/interviews/names.pdf
@@ -263,7 +263,7 @@ let nameStrings = [
   ["Kim", "Nguyen"],
   ["Ksenia", "Coulter"],
   ["Kyle", "Rocco"],
-  ["Kyler", "Cameron"], 
+  ["Kyler", "Cameron"],
   ["Lan", "Jiang"],
   ["Landin", "King"],
   ["Lauren", "Jones"],
@@ -450,7 +450,7 @@ let nameStrings = [
   ["Vincent", "Callahan"],
   ["Vincent", "Vuong"],
   ["Vivian", "Wong"],
-  ["Warren", "Miller"], 
+  ["Warren", "Miller"],
   ["Wei", "Su"],
   ["Wei", "Wang"],
   ["Wen", "Ye"],
@@ -493,12 +493,12 @@ let nameStrings = [
 
 class Name {
   static var nameIndex = [String:Name]()
-  
+
   var name: String
   var firsts = [Person]()
   var lasts = [Person]()
   var visited = false
-  
+
   init(name: String) {
     self.name = name
   }
@@ -530,18 +530,12 @@ class Name {
   }
 
   func countPeople() -> Int {
-    var count = 0
-    visited = true
-    (firsts + lasts).forEach { person in
-      if (!person.visited) {
-        person.visited = true
-        count += 1 +
-          person.first.countPeople() +
-          person.last.countPeople()
-      }
+    if visited {
+      return 0
     }
-    return count
-  } 
+    visited = true
+    return (firsts + lasts).reduce(0) { $0 + $1.countNames() }
+  }
 }
 
 class Person {
@@ -550,12 +544,12 @@ class Person {
   var first: Name
   var last: Name
   var visited = false
-  
+
   init(first: Name, last: Name) {
     self.first = first
     self.last = last
   }
-  
+
   static func loadPeople(_ nameStrings: [[String]]) {
     nameStrings.forEach {
       let first = Name.getName($0[0])
@@ -569,6 +563,14 @@ class Person {
 
   func isMagic() -> Bool {
     return first.lasts.count > 0 && last.firsts.count > 0
+  }
+
+  func countNames() -> Int {
+    if visited {
+      return 0
+    }
+    visited = true
+    return 1 + first.countPeople() + last.countPeople()
   }
 }
 
@@ -609,6 +611,6 @@ names.forEach { name in
   }
 }
 
-for cluster in Array(clusterSizes.keys).sorted() {
-  print("\(cluster): \(clusterSizes[cluster]!)")
-}
+Array(clusterSizes.keys)
+  .sorted()
+  .forEach { print("\($0): \(clusterSizes[$0]!)") }
