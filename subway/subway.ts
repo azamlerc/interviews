@@ -2,7 +2,12 @@
 
 // Take a section of the Manhattan street grid bounded by Ave A to 11 Av, and Houston St to 59 St. We can express coordinates as [blocks west of Ave A, blocks north of Houston]. For example, the coordinates for the Compass office are [5,14] because it is at the intersection of 5 Av and 14 St. 
 
-const compass = [5,14];
+// Visualization:
+// https://andrewzc.net/subway.html
+
+type Point = [number, number];
+
+const compass: Point = [5,14];
 const avenueBlock = 0.17; // miles
 const streetBlock = 0.05; // miles
 const walkingSpeed = 3.0; // miles per hour
@@ -10,6 +15,19 @@ const subwaySpeed = 17.0; // miles per hour
 const entryTime = 3.0; // minutes to enter station and catch train
 const dwellTime = 0.5; // minutes to wait in each intermediate station
 const exitTime = 1.0; // minutes to exit station
+
+interface Itinerary {
+  lineName?: string;
+  startStation?: Point;
+  endStation?: Point;
+  totalTime: number;
+}
+
+interface Listing {
+  name: string;
+  point: Point;
+  itinerary?: Itinerary;
+}
 
 // There are subway lines with stations at the following coordinates:
 const lines = {
@@ -35,7 +53,7 @@ const lines = {
 };
 
 // The task is to sort this array of listings by subway distance:
-const listings = [
+const listings: Listing[] = [
   {name: "Alphabet City", point: [0,3]},
   {name: "Hudson Yards", point: [11,34]},
   {name: "Times Square", point: [7,42]},
@@ -49,20 +67,7 @@ const listings = [
   {name: "Hell's Kitchen", point: [9,55]},
 ];
 
-listings.forEach((listing) => {  
-  var itineraries = Object.keys(lines).map((lineName) => {
-    return itineraryForLine(listing.point, lineName, compass);
-  });
-  itineraries.push({totalTime: walkingTime(listing.point, compass)});
-  itineraries.sort((a,b) => a.totalTime - b.totalTime);
-  var best = itineraries[0];
-  listing.itinerary = best;
-  listing.totalTime = best.totalTime;
-});
-listings.sort((a,b) => a.totalTime - b.totalTime);
-listings.map((listing) => console.log(listing.name + ' - ' + printItinerary(listing.itinerary))); 
-
-function printItinerary(itinerary) {
+function printItinerary(itinerary: Itinerary) {
   if (!itinerary) {
     return '';
   } else if (itinerary.totalTime && !itinerary.lineName) {
@@ -72,54 +77,40 @@ function printItinerary(itinerary) {
   }
 }
 
-function itineraryForLine(home, lineName, office) {
-  var i = {lineName};
-  var line = lines[lineName];
-  var startIndex = indexOfNearestStation(line, home);
-  var endIndex = indexOfNearestStation(line, office); // cache this
-  i.startStation = line[startIndex];
-  i.endStation = line[endIndex];
-  var startWalkTime = walkingTime(home, i.startStation);
-  var endWalkTime = walkingTime(i.endStation, office);
-  var subwayTime = subwayJourneyTime(line, startIndex, endIndex);
-  i.totalTime = startWalkTime + subwayTime + endWalkTime;
-  return i;
-}
-
 // Returns the east/west distance in miles between two points.
-function avenueDistance(pointA, pointB) {
+function avenueDistance(pointA: Point, pointB: Point): number {
   return Math.abs(pointA[0] - pointB[0]) * avenueBlock;
 }
         
 // Returns the north/south distance in miles between two points.
-function streetDistance(pointA, pointB) {
+function streetDistance(pointA: Point, pointB: Point): number {
   return Math.abs(pointA[1] - pointB[1]) * streetBlock;
 }
 
 // Minutes to walk between two points along the street grid.
-function walkingTime(pointA, pointB) {
-  var dx = avenueDistance(pointA, pointB);
-  var dy = streetDistance(pointA, pointB);
+function walkingTime(pointA: Point, pointB: Point): number {
+  let dx: number = avenueDistance(pointA, pointB);
+  let dy: number = streetDistance(pointA, pointB);
   return (dx + dy) / walkingSpeed * 60.0;
 }
 
 // Minutes for a train to go between two adjacent stations on a line,
 // which could go diagonally under the street grid.
-function subwayTime(stationA, stationB) {
-  var dx = avenueDistance(stationA, stationB);
-  var dy = streetDistance(stationA, stationB);
+function subwayTime(stationA: Point, stationB: Point): number {
+  let dx: number = avenueDistance(stationA, stationB);
+  let dy: number = streetDistance(stationA, stationB);
   return Math.sqrt(dx * dx + dy * dy) / subwaySpeed * 60.0;
 }
 
 // Time to go down a subway line between stations at certain indexes.
-function subwayJourneyTime(line, startIndex, endIndex) {
-  var time = entryTime;
+function subwayJourneyTime(line: Point[], startIndex: number, endIndex: number): number {
+  var time: number = entryTime;
   
   if (startIndex > endIndex) {
     [startIndex, endIndex] = [endIndex, startIndex];
   }
   for (var a = startIndex; a < endIndex; a++) {
-    var b = a + 1;
+    let b = a + 1;
     time += subwayTime(line[a], line[b]);
     if (b != endIndex) time += dwellTime;
     
@@ -130,12 +121,12 @@ function subwayJourneyTime(line, startIndex, endIndex) {
 }
 
 // The index of a station on a line that is nearest to a given point.
-function indexOfNearestStation(line, point) {
-    var bestIndex = -1;
-    var bestTime = -1;
+function indexOfNearestStation(line: Point[], point: Point): number {
+    let bestIndex: number = -1;
+    let bestTime: number = -1;
   
     for (var i = 0; i < line.length; i++) {
-      var time = walkingTime(line[i], point);
+      let time = walkingTime(line[i], point);
       if (bestIndex == -1 || time < bestTime) {
         bestIndex = i;
         bestTime = time;
@@ -144,3 +135,28 @@ function indexOfNearestStation(line, point) {
   
     return bestIndex;
 }
+
+function itineraryForLine(home: Point, lineName: string, office: Point): Itinerary {
+  let line = lines[lineName];
+  let startIndex = indexOfNearestStation(line, home);
+  let endIndex = indexOfNearestStation(line, office); // cache this
+  let startStation = line[startIndex];
+  let endStation = line[endIndex];
+  let startWalkTime = walkingTime(home, startStation);
+  let endWalkTime = walkingTime(endStation, office);
+  let subwayTime = subwayJourneyTime(line, startIndex, endIndex);
+  let totalTime = startWalkTime + subwayTime + endWalkTime;
+  return {lineName, startStation, endStation, totalTime};
+}
+
+listings.forEach((listing: Listing) => {  
+  var itineraries: Itinerary[] = Object.keys(lines).map((lineName: string) => {
+    return itineraryForLine(listing.point, lineName, compass);
+  });
+  itineraries.push({totalTime: walkingTime(listing.point, compass)});
+  itineraries.sort((a,b) => a.totalTime - b.totalTime);
+  var best = itineraries[0];
+  listing.itinerary = best;
+});
+listings.sort((a,b) => a.itinerary.totalTime - b.itinerary.totalTime);
+listings.map((listing) => console.log(listing.name + ' - ' + printItinerary(listing.itinerary)));
