@@ -1,3 +1,19 @@
+// What happens when you keep following the first link in Wikipedia articles?
+// You almost always get back to the articles on Existence or Awareness.
+
+// Visualization: https://andrewzc.net/wikilinks/
+
+// You are given an array of article objects, which are connected in a tree.
+// Every artcile has exactly one parent, and zero or more children.
+
+// 1. Find the featured articles, which are the leaf nodes with no children.
+
+// 2. Find the set of root articles by following the parent links of each featured
+//    article, until you get to a root article whose parent is already in the chain.
+
+// 3. Call printArticle() on each unique root node, taking care to avoid printing
+//    any article more than once or getting stuck in an infinite loop.
+
 let articleNames = {
   "1944 Cuba–Florida hurricane": "Atlantic hurricane",
   "1962 Tour de France": "Tour de France",

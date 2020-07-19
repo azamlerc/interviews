@@ -1,3 +1,19 @@
+// What happens when you keep following the first link in Wikipedia articles?
+// You almost always get back to the articles on Existence or Awareness.
+
+// Visualization: https://andrewzc.net/wikilinks/
+
+// You are given an array of article objects, which are connected in a tree.
+// Every artcile has exactly one parent, and zero or more children.
+
+// 1. Find the featured articles, which are the leaf nodes with no children.
+
+// 2. Find the set of root articles by following the parent links of each featured
+//    article, until you get to a root article whose parent is already in the chain.
+
+// 3. Call printArticle(0) on each unique root node, taking care to avoid printing
+//    any article more than once or getting stuck in an infinite loop.
+
 #import <Foundation/Foundation.h>
 #import <stdio.h>
 
@@ -28,7 +44,7 @@
 
 - (NSString *) times: (int) count;
 
-@end 
+@end
 
 @interface NSArray (Functional)
 
@@ -103,7 +119,7 @@ static NSMutableDictionary *articleIndex;
 + (void) printArticles: (NSArray *) articles {
   [[[articles filter: ^BOOL(Article *article) {
     return article.terminal > 0;
-  }] sortBy: @"name" reverse: YES] 
+  }] sortBy: @"name" reverse: YES]
     each: ^(Article *article) {
       [article printArticle: 0];
   }];
@@ -113,7 +129,7 @@ static NSMutableDictionary *articleIndex;
   if (!self.printed) {
     NSLog(@"%@%@", [@"." times: depth], self.name);
     self.printed = YES;
-    [[self.children sortBy: @"maxDepth" reverse: YES] 
+    [[self.children sortBy: @"maxDepth" reverse: YES]
       each: ^(Article *article) {
         [article printArticle: depth + 1];
     }];
@@ -158,7 +174,7 @@ static NSMutableDictionary *articleIndex;
   }
 }
 
-@end 
+@end
 
 int main (int argc, const char * argv[])
 {
@@ -554,8 +570,8 @@ int main (int argc, const char * argv[])
       @"World Health Organization": @"List of specialized agencies of the United Nations",
       @"World War I memorials": @"World War I",
       @"World War I": @"World war",
-      @"World war": @"Cold War"};    
-    
+      @"World war": @"Cold War"};
+
     NSArray *articles = [Article loadArticles: articleNames];
     [Article findChains: articles];
     [Article printArticles: articles];

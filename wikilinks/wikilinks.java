@@ -1,3 +1,19 @@
+// What happens when you keep following the first link in Wikipedia articles?
+// You almost always get back to the articles on Existence or Awareness.
+
+// Visualization: https://andrewzc.net/wikilinks/
+
+// You are given an array of article objects, which are connected in a tree.
+// Every artcile has exactly one parent, and zero or more children.
+
+// 1. Find the featured articles, which are the leaf nodes with no children.
+
+// 2. Find the set of root articles by following the parent links of each featured
+//    article, until you get to a root article whose parent is already in the chain.
+
+// 3. Call printArticle(0) on each unique root node, taking care to avoid printing
+//    any article more than once or getting stuck in an infinite loop.
+
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,30 +35,30 @@ class Article {
 
   static ArrayList<Article> loadArticles(String[][] names) {
     HashMap<String,Article> index = new HashMap<>();
-    
+
     for (int i = 0; i < names.length; i++) {
       String name = names[i][0];
-      String link = names[i][1];      
+      String link = names[i][1];
       Article article = index.getOrDefault(name, new Article(name));
       Article parent = index.getOrDefault(link, new Article(link));
       index.put(name, article);
       index.put(link, parent);
-            
+
       article.parent = parent;
       parent.children.add(article);
     }
 
     return new ArrayList<Article>(index.values());
   }
-  
+
   static void findChains(ArrayList<Article> articles) {
     articles.stream()
       .filter(article -> article.children.size() == 0)
       .forEach(article -> {
         article.chain = article.findChain(new ArrayList<>());
         int depth = article.chain.size();
-        article.chain.stream().forEach((a -> 
-          a.maxDepth = Math.max(a.maxDepth, depth))); 
+        article.chain.stream().forEach((a ->
+          a.maxDepth = Math.max(a.maxDepth, depth)));
         });
   }
 
@@ -466,7 +482,7 @@ class Solution {
     {"World War I memorials", "World War I"},
     {"World War I", "World war"},
     {"World war", "Cold War"}};
-  
+
   public static void main(String[] args) {
     ArrayList<Article> articles = Article.loadArticles(names);
     Article.findChains(articles);

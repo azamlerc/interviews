@@ -1,3 +1,19 @@
+; What happens when you keep following the first link in Wikipedia articles?
+; You almost always get back to the articles on Existence or Awareness.
+
+; Visualization: https://andrewzc.net/wikilinks/
+
+; You are given an array of article objects, which are connected in a tree.
+; Every artcile has exactly one parent, and zero or more children.
+
+; 1. Find the featured articles, which are the leaf nodes with no children.
+
+; 2. Find the set of root articles by following the parent links of each featured
+;    article, until you get to a root article whose parent is already in the chain.
+
+; 3. Call printArticle(0) on each unique root node, taking care to avoid printing
+;    any article more than once or getting stuck in an infinite loop.
+
 (require 'clojure.set)
 
 (def articleIndex {
@@ -409,12 +425,12 @@
 (def featuredArticles (sort (difference articles parentArticles)))
 (def chains (map getChain featuredArticles))
 (def rootArticles (remove #(= % "Object") (distinct (map first chains))))
-(def children (reduce addToChildren {} articles)) 
+(def children (reduce addToChildren {} articles))
 
-(defn printArticle [article depth] 
+(defn printArticle [article depth]
   (println (indent depth) article)
-  (doseq [article (get children article)] 
-    (if (not (contains rootArticles article)) 
+  (doseq [article (get children article)]
+    (if (not (contains rootArticles article))
       (printArticle article (inc depth)))))
 
 (doseq [article rootArticles] (printArticle article 0))

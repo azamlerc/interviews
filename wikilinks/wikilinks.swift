@@ -1,3 +1,19 @@
+// What happens when you keep following the first link in Wikipedia articles?
+// You almost always get back to the articles on Existence or Awareness.
+
+// Visualization: https://andrewzc.net/wikilinks/
+
+// You are given an array of article objects, which are connected in a tree.
+// Every artcile has exactly one parent, and zero or more children.
+
+// 1. Find the featured articles, which are the leaf nodes with no children.
+
+// 2. Find the set of root articles by following the parent links of each featured
+//    article, until you get to a root article whose parent is already in the chain.
+
+// 3. Call printArticle(0) on each unique root node, taking care to avoid printing
+//    any article more than once or getting stuck in an infinite loop.
+
 import Foundation
 
 let articleNames = [
@@ -401,7 +417,7 @@ extension String {
         }
         return string
     }
-    
+
 }
 
 class Article: Equatable {
@@ -439,10 +455,10 @@ class Article: Equatable {
   static func findChains(articles: [Article]) {
     articles
       .filter { $0.children.count == 0 }
-      .forEach { article in 
-        article.chain = article.findChain(chain: []) 
+      .forEach { article in
+        article.chain = article.findChain(chain: [])
         let depth = article.chain.count
-        article.chain.forEach { 
+        article.chain.forEach {
           $0.maxDepth = max($0.maxDepth, depth)
         }
     }
@@ -464,7 +480,7 @@ class Article: Equatable {
       .sorted { $0.terminal > $1.terminal }
       .forEach { $0.printArticle(depth: 0) }
   }
-  
+
   func printArticle(depth: Int) {
     if !printed {
       print("·".times(depth) + name)
