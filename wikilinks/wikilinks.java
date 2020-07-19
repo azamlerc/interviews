@@ -78,9 +78,14 @@ class Article {
       .forEach(article -> article.printArticle(0));
   }
 
+  String repeat(String string, int times) {
+    if (times == 0) return "";
+    return string + repeat(string, times - 1);
+  }
+
   void printArticle(int depth) {
     if (!printed) {
-      System.out.println("·".repeat(depth) + name);
+      System.out.println(repeat("·", depth) + name);
       printed = true;
       children.stream()
         .sorted((a1, a2) -> a2.maxDepth - a1.maxDepth)
