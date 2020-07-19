@@ -69,12 +69,6 @@ function cardLetter(card) {
   }
 }
 
-function moveTo(deck, card, index) {
-    let oldIndex = deck.indexOf(card);
-    deck.splice(index, 1);
-    deck.splice(newIndex, 0, card);
-}
-
 function moveDown(deck, card, by) {
     let index = deck.indexOf(card);
     deck.splice(index, 1);
