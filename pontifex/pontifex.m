@@ -57,9 +57,7 @@ typedef id(^Operation)(id, id);
 @interface NSString (PontifexString)
 
 - (NSInteger) intCode;
-+ (NSString *) charWithInt: (NSInteger) value;
-- (NSString *) plus: (NSString *) other;
-- (NSString *) minus: (NSString *) other;
++ (NSString *) stringWithInt: (NSInteger) value;
 - (NSString *) add: (NSString *) other;
 - (NSString *) subtract: (NSString *) other;
 - (NSArray *) split;
@@ -73,7 +71,7 @@ typedef id(^Operation)(id, id);
   return [self characterAtIndex: 0] - 64;
 }
 
-+ (NSString *) charWithInt: (NSInteger) value {
++ (NSString *) stringWithInt: (NSInteger) value {
   while (value < 1) {
     value += 26;
   }
@@ -81,23 +79,15 @@ typedef id(^Operation)(id, id);
   return [NSString stringWithFormat:@"%c", (char)value + 64];
 }
 
-- (NSString *) plus: (NSString *) other {
-  return [NSString charWithInt: [self intCode] + [other intCode]];
-}
-
-- (NSString *) minus: (NSString *) other {
-  return [NSString charWithInt: [self intCode] - [other intCode]];
-}
-
 - (NSString *) add: (NSString *) other {
   return [[[self split] zip: [other split] map: ^(id a, id b) {
-    return [a plus: b];
+    return [NSString stringWithInt: [a intCode] + [b intCode]];
   }] join];
 }
 
 - (NSString *) subtract: (NSString *) other {
   return [[[self split] zip: [other split] map: ^(id a, id b) {
-    return [a minus: b];
+    return [NSString stringWithInt: [a intCode] - [b intCode]];
   }] join];
 }
 
@@ -191,9 +181,9 @@ typedef enum Suit : NSUInteger {
 - (NSString *) letter {
   switch (self.suit) {
     case Clubs:
-    case Hearts: return [NSString charWithInt: self.rank];
+    case Hearts: return [NSString stringWithInt: self.rank];
     case Diamonds:
-    case Spades: return [NSString charWithInt: self.rank + 13];
+    case Spades: return [NSString stringWithInt: self.rank + 13];
     default: return nil;
   }
 }
