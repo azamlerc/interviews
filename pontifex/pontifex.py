@@ -10,7 +10,6 @@
 # can be used to encypher and decypher a message.
 
 from enum import Enum
-import string
 import textwrap
 
 def charValue(value):
