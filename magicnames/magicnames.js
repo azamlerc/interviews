@@ -516,17 +516,15 @@ console.log('\nCluster sizes:');
 let clusterSizes = {};
 // TODO: update clusterSizes
 names.forEach((name) => {
-  if (!name.visited) {
-    let count = countName(name);
-    clusterSizes[count] = (clusterSizes[count] || 0) + 1;
-  }
+  let count = countName(name);
+  if (count) clusterSizes[count] = (clusterSizes[count] || 0) + 1;
 });
 console.log(clusterSizes);
 
 function countName(name) {
   if (name.visited) return 0;
   name.visited = true;
-  return name.firsts.concat(name.lasts)
+  return [...name.firsts, ...name.lasts]
     .reduce((total, person) => total + countPerson(person), 0);
 }
 

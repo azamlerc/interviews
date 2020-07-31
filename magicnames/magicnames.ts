@@ -524,7 +524,7 @@ console.log(clusterSizes);
 function countName(name: Name): number {
   if (name.visited) return 0;
   name.visited = true;
-  return name.firsts.concat(name.lasts)
+  return [...name.firsts, ...name.lasts]
     .reduce((total: number, person: Person) => total + countPerson(person), 0);
 }
 
