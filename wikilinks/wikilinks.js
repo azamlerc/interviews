@@ -4,7 +4,7 @@
 // Visualization: https://andrewzc.net/wikilinks/
 
 // You are given an array of article objects, which are connected in a tree.
-// Every artcile has exactly one parent, and zero or more children.
+// Every article has exactly one parent, and zero or more children.
 
 // 1. Find the featured articles, which are the leaf nodes with no children.
 
@@ -451,7 +451,7 @@ function repeat(string, times) {
   return string + repeat(string, times - 1);
 }
 
-function printArticle(article, depth) {
+function printArticle(article, depth = 0) {
   if (article.printed) return;
   console.log(repeat("·", depth) + article.name);
   article.printed = true;
@@ -464,7 +464,7 @@ function printArticles(articles) {
   articles
     .filter((article) => article.terminal > 0)
     .sort((a1, a2) => a2.terminal - a1.terminal)
-    .forEach((article) => printArticle(article, 0));
+    .forEach((article) => printArticle(article));
 }
 
 let articles = getArticles();

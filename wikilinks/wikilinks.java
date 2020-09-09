@@ -4,7 +4,7 @@
 // Visualization: https://andrewzc.net/wikilinks/
 
 // You are given an array of article objects, which are connected in a tree.
-// Every artcile has exactly one parent, and zero or more children.
+// Every article has exactly one parent, and zero or more children.
 
 // 1. Find the featured articles, which are the leaf nodes with no children.
 
@@ -53,7 +53,7 @@ class Article {
 
   static void findChains(ArrayList<Article> articles) {
     articles.stream()
-      .filter(article -> article.children.size() == 0)
+      .filter(article -> article.children.isEmpty())
       .forEach(article -> {
         article.chain = article.findChain(new ArrayList<>());
         int depth = article.chain.size();
@@ -78,14 +78,9 @@ class Article {
       .forEach(article -> article.printArticle(0));
   }
 
-  String repeat(String string, int times) {
-    if (times == 0) return "";
-    return string + repeat(string, times - 1);
-  }
-
   void printArticle(int depth) {
     if (!printed) {
-      System.out.println(repeat("·", depth) + name);
+      System.out.println("·".repeat(depth) + name);
       printed = true;
       children.stream()
         .sorted((a1, a2) -> a2.maxDepth - a1.maxDepth)

@@ -4,7 +4,7 @@
 // Visualization: https://andrewzc.net/wikilinks/
 
 // You are given an array of article objects, which are connected in a tree.
-// Every artcile has exactly one parent, and zero or more children.
+// Every article has exactly one parent, and zero or more children.
 
 // 1. Find the featured articles, which are the leaf nodes with no children.
 
