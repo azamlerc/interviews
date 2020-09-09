@@ -9,7 +9,7 @@
 // 4. Which "magic" people have a first name that is someone's last name, and a last name that is someone's first name?
 
 // 5. People are in a cluster if their names are connected in some way. For example, Landin King, Roger King, and Roger Geng are in a cluster of 3 people. Print the number of clusters of each size.
-  
+
 // 6. Do the results change if you add your name to the list?
 
 // Diagram: https://andrewzc.net/interviews/names.pdf
@@ -251,7 +251,7 @@ class Solution {
     {"Kim", "Nguyen"},
     {"Ksenia", "Coulter"},
     {"Kyle", "Rocco"},
-    {"Kyler", "Cameron"}, 
+    {"Kyler", "Cameron"},
     {"Lan", "Jiang"},
     {"Landin", "King"},
     {"Lauren", "Jones"},
@@ -426,7 +426,7 @@ class Solution {
     {"Victor", "Zhu"},
     {"Vincent", "Vuong"},
     {"Vivian", "Wong"},
-    {"Warren", "Miller"}, 
+    {"Warren", "Miller"},
     {"Wei", "Su"},
     {"Wei", "Wang"},
     {"Wen", "Ye"},
@@ -463,11 +463,12 @@ class Solution {
     {"Zoey", "Sun"},
     {"Zvi", "Band"}
   };
-  
+
   public static void main(String[] args) {
     ArrayList<Person> people = new ArrayList<>();
     ArrayList<Name> names;
-    
+    HashMap<String,Name> nameIndex = new HashMap<>();
+
     // builds the graph network for people and names
     for (int i = 0; i < nameStrings.length; i++) {
       String first = nameStrings[i][0];
@@ -481,61 +482,59 @@ class Solution {
       lastName.lasts.add(person);
       people.add(person);
     }
-    names = new ArrayList<Name>(Name.nameIndex.values());
+    names = new ArrayList<Name>(nameIndex.values());
 
     System.out.println("Top first names:");
     names.stream()
       // .filter((name) -> false) // TODO: find top first names
-      .sorted((Name n1, Name n2) -> 
+      .sorted((Name n1, Name n2) ->
         n2.firsts.size() - n1.firsts.size())
       .limit(5)
-      .forEach((name) -> 
+      .forEach((name) ->
         System.out.println(name.name + " - " + name.lastNames()));
 
     System.out.println("\nTop last names:");
     names.stream()
       // .filter((name) -> false) // TODO: find top last names
-      .sorted((Name n1, Name n2) -> 
+      .sorted((Name n1, Name n2) ->
         n2.lasts.size() - n1.lasts.size())
       .limit(5)
-      .forEach((name) -> 
+      .forEach((name) ->
         System.out.println(name.name + " - " + name.firstNames()));
-   
+
     System.out.println("\nMagic names:");
     names.stream()
       // .filter((name) -> false) // TODO: find magic names
-      .filter(name -> 
+      .filter(name ->
         name.firsts.size() > 0 && name.lasts.size() > 0)
-      .sorted((Name n1, Name n2) -> 
-        n2.firsts.size() + n2.lasts.size() - 
+      .sorted((Name n1, Name n2) ->
+        n2.firsts.size() + n2.lasts.size() -
         n1.firsts.size() - n1.lasts.size())
-      .forEach((name) -> 
-        System.out.println(name.name + " - " + 
+      .forEach((name) ->
+        System.out.println(name.name + " - " +
           name.firstNames() + " / " + name.lastNames()));
 
     System.out.println("\nMagic people:");
     people.stream()
-      // .filter((name) -> false) // TODO: find magic people
+      // .filter((person) -> false) // TODO: find magic people
       .filter((person) ->
-        person.first.lasts.size() > 0 && 
+        person.first.lasts.size() > 0 &&
         person.last.firsts.size() > 0)
-      .forEach((person) -> 
+      .forEach((person) ->
         System.out.println(person.first.name + " " +
                            person.last.name));
-    
+
     System.out.println("\nCluster sizes:");
     HashMap<Integer,Integer> clusterSizes = new HashMap<>();
     // TODO: find cluster sizes
     names.stream()
       .filter(name -> !name.visited)
       .forEach(name -> {
-        Integer cluster = name.countName();
-        Integer count = clusterSizes.get(cluster);
-        if (count == null) count = 0;
-        count++;
-        clusterSizes.put(cluster, count);
+        Integer cluster = name.countPeople();
+        Integer count = clusterSizes.getOrDefault(cluster, 0);
+        clusterSizes.put(cluster, count + 1);
     });
-    
+
     ArrayList<Integer> clusters = new ArrayList<Integer>(clusterSizes.keySet());
     Collections.sort(clusters);
     for (Integer cluster : clusters) {
@@ -545,57 +544,54 @@ class Solution {
 }
 
 class Name {
-  static HashMap<String,Name> nameIndex = new HashMap<>();
-  
   String name;
   ArrayList<Person> firsts;
   ArrayList<Person> lasts;
   Boolean visited;
-  int personCount;
-  
+
   Name(String name) {
     this.name = name;
     this.firsts = new ArrayList<>();
     this.lasts = new ArrayList<>();
     this.visited = false;
   }
-  
+
   String firstNames() {
     return this.lasts.stream()
       .map(person -> person.first.name)
       .collect(Collectors.joining(", "));
   }
-  
+
   String lastNames() {
     return this.firsts.stream()
       .map(person -> person.last.name)
       .collect(Collectors.joining(", "));
   }
-  
-  int countName() {
-    this.personCount = 0;
+
+  int countPeople() {
+    if (this.visited) return 0;
     this.visited = true;
-    Stream.of(this.firsts, this.lasts)
+    return Stream.of(this.firsts, this.lasts)
       .flatMap(x -> x.stream())
-      .filter(person -> !person.visited)
-      .forEach(person -> {
-        person.visited = true;
-        this.personCount += 1 + 
-          person.first.countName() + 
-          person.last.countName();
-      });
-    return this.personCount;
-  } 
+      .mapToInt(Person::countPeople)
+      .reduce(0, Integer::sum);
+  }
 }
 
 class Person {
   Name first;
   Name last;
   Boolean visited;
-  
+
   Person(Name first, Name last) {
     this.first = first;
     this.last = last;
     this.visited = false;
+  }
+
+  int countPeople() {
+    if (this.visited) return 0;
+    this.visited = true;
+    return 1 + first.countPeople() + last.countPeople();
   }
 }
