@@ -12,10 +12,7 @@
 (defn both-ways [op a b] [(op a b) (op b a)])
 
 (defn combine [fa fb]
-  (->> (for [a fa b fb op [+ - * div]] (both-ways op a b))
-    (flatten)
-    (distinct)
-    (sort)))
+  (->> (for [a fa b fb op [+ - * div]] (both-ways op a b)) (flatten) (distinct) (sort)))
 
 (defn four-fours []
   (let [

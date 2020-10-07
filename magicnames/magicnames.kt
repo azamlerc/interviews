@@ -14,8 +14,6 @@
 
 // Diagram: https://andrewzc.net/interviews/names.pdf
 
-import Foundation
-
 val nameStrings = listOf(
   listOf("Aaron", "Wilson"),
   listOf("Abhishek", "Sarihan"),
@@ -457,124 +455,126 @@ val nameStrings = listOf(
   listOf("Zvi", "Band")
 )
 
-class Name {
-  static var nameIndex = [String:Name]()
-
-  var name: String
-  var firsts = [Person]()
-  var lasts = [Person]()
+class Name(name: String) {
+  var name = name
+  var firsts = mutableListOf<Person>()
+  var lasts = mutableListOf<Person>()
   var visited = false
 
-  init(name: String) {
-    self.name = name
+  fun firstNames(): String {
+    return lasts.map { person -> person.first.name}.joinToString()
   }
 
-  static fun getName(_ value: String) -> Name {
-    if let name = nameIndex[value] {
-      return name
-    } else {
-      let name = Name(name:value)
-      nameIndex[value] = name
-      return name
-    }
+  fun lastNames(): String {
+    return firsts.map { person -> person.last.name}.joinToString()
   }
 
-  fun firstNames() -> String {
-    return lasts.map {$0.first.name}.joined(separator: ", ")
+  fun totalCount(): Int {
+    return firsts.size + lasts.size
   }
 
-  fun lastNames() -> String {
-    return firsts.map {$0.last.name}.joined(separator: ", ")
+  fun isMagic(): Boolean {
+    return firsts.size > 0 && lasts.size > 0
   }
 
-  fun isMagic() -> Bool {
-    return firsts.count > 0 && lasts.count > 0
-  }
-
-  fun totalCount() -> Int {
-    return firsts.count + lasts.count
-  }
-
-  fun countPeople() -> Int {
+  fun countPeople(): Int {
+    if (visited) return 0
     var count = 0
     visited = true
-    (firsts + lasts).forEach { person in
-      if (!person.visited) {
-        person.visited = true
-        count += 1 +
-          person.first.countPeople() +
-          person.last.countPeople()
-      }
+    (firsts + lasts).forEach { person ->
+      count += person.countNames()
     }
     return count
   }
 }
 
-class Person {
-  static var people = [Person]()
-
-  var first: Name
-  var last: Name
+class Person(first: Name, last: Name) {
+  var first = first
+  var last = last
   var visited = false
 
-  init(first: Name, last: Name) {
-    self.first = first
-    self.last = last
+  fun isMagic(): Boolean {
+    return first.lasts.size > 0 && last.firsts.size > 0
   }
 
-  static fun loadPeople(_ nameStrings: [[String]]) {
-    nameStrings.forEach {
-      let first = Name.getName($0[0])
-      let last = Name.getName($0[1])
-      let person = Person(first:first, last:last)
-      first.firsts.append(person)
-      last.lasts.append(person)
-      people.append(person)
+  fun countNames(): Int {
+    if (visited) return 0
+    visited = true
+    return 1 + first.countPeople() + last.countPeople()
+  }
+}
+
+var nameIndex = mutableMapOf<String, Name>()
+var people = mutableListOf<Person>()
+
+fun getName(value: String): Name {
+  var name = nameIndex.get(value)
+  if (name != null) {
+    return name
+  } else {
+    name = Name(value)
+    nameIndex.put(value, name)
+    return name
+  }
+}
+
+fun loadPeople() {
+  nameStrings.forEach { firstLast ->
+    val first = getName(firstLast.get(0))
+    val last = getName(firstLast.get(1))
+    val person = Person(first, last)
+    first.firsts.add(person)
+    last.lasts.add(person)
+    people.add(person)
+  }
+}
+
+fun main(args: Array<String>) {
+  loadPeople()
+  var names: MutableList<Name> = nameIndex.values.toMutableList()
+
+  println("Top first names:")
+  names
+    .filter { true } // TODO: find top first names
+    .sortedBy { it.firsts.size }
+    .reversed()
+    .slice(0..5)
+    .forEach { println(it.name + " - " + it.lastNames()) }
+
+  println("\nTop last names:")
+  names
+    .filter { true } // TODO: find top last names
+    .sortedBy { it.lasts.size }
+    .reversed()
+    .slice(0..5)
+    .forEach { println(it.name + " - " + it.firstNames()) }
+
+  println("\nMagic names:")
+  names
+    .filter { true } // TODO: find magic names
+    .filter { it.isMagic() }
+    .sortedBy { it.totalCount() }
+    .reversed()
+    .forEach { println(it.name + " - " + it.firstNames() + " / " + it.lastNames()) }
+
+  println("\nMagic people:")
+  people
+    .filter { true } // TODO: find magic people
+    .filter { it.isMagic() }
+    .forEach { println(it.first.name + " " + it.last.name) }
+
+  println("\nCluster sizes:")
+  var clusterSizes = mutableMapOf<Int,Int>() // TODO: update clusterSizes
+  names.forEach { name ->
+    if (!name.visited) {
+      val size = name.countPeople()
+      val count = clusterSizes.get(size) ?: 0
+      clusterSizes.put(size, count + 1)
     }
   }
 
-  fun isMagic() -> Bool {
-    return first.lasts.count > 0 && last.firsts.count > 0
+  for (size in clusterSizes.keys.toMutableList().sorted()) {
+    val count = clusterSizes.get(size)!!
+    println("$size: $count")
   }
-}
-
-Person.loadPeople(nameStrings)
-
-var names = Array(Name.nameIndex.values)
-
-print("Top first names:")
-names
-  .filter { _ in true } // TODO: find top first names
-  .sorted { $0.firsts.count > $1.firsts.count }[0...4]
-  .forEach { print($0.name, "-", $0.lastNames()) }
-
-print("\nTop last names:")
-names
-  .filter { _ in true } // TODO: find top last names
-  .sorted { $0.lasts.count > $1.lasts.count }[0...4]
-  .forEach { print($0.name, "-", $0.firstNames()) }
-
-print("\nMagic names:")
-names
-  .filter { _ in true } // TODO: find magic names
-  .filter { $0.isMagic() }
-  .sorted { $0.totalCount() > $1.totalCount() }
-  .forEach { print($0.name, "-", $0.firstNames(), "/", $0.lastNames()) }
-
-print("\nMagic people:")
-Person.people
-  .filter { _ in true } // TODO: find magic people
-  .filter { $0.isMagic() }
-  .forEach { print($0.first.name, $0.last.name) }
-
-print("\nCluster sizes:")
-var clusterSizes = [Int:Int]() // TODO: update clusterSizes
-names.forEach { name in
-  if !name.visited {
-    clusterSizes[name.countPeople(), default: 0] += 1
-  }
-}
-
-for cluster in Array(clusterSizes.keys).sorted() {
-  print("\(cluster): \(clusterSizes[cluster]!)")
 }
