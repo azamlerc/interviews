@@ -1,0 +1,62 @@
+body {
+	margin: 20px;
+}
+
+a {
+	color: #999;
+	text-decoration: none;
+}
+
+.link {
+	color: black;
+}
+
+.headline {
+	margin-bottom: 20px;
+	font: 48pt Avenir;
+	white-space: nowrap;
+}
+
+.items, .checkbox {
+	font: 14pt Avenir; 
+	color: #666;
+	white-space: nowrap;
+}
+
+.score {
+	font: 14pt Avenir; 
+	color: #222;
+}
+
+.caption {
+	font: 24pt Avenir; 
+	color: #999;
+}
+
+.text {
+	font: 24pt Avenir; 
+	color: #999;
+}
+
+.russian {
+	font: 48pt Helvetica;
+	font-weight: lighter;
+}
+
+.icon {
+	width: 43px;
+	height: 43px;
+	position: relative;
+	top: 4px;
+}
+
+.icon-large {
+	width: 64px;
+	height: 64px;
+	position: relative;
+	top: 16px;
+}
+
+.missing {
+  color: red;
+}
