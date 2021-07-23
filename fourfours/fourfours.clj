@@ -6,13 +6,10 @@
 ;; In this case, we will start with the initial values 4, .4, √4 and 4! and combine them using the operations addition, subtraction, multiplication and division.
 
 (defn round [d] (Double/parseDouble (format "%.6f" d)))
-
 (defn div [a b] (if (zero? b) [] (round (/ a b))))
-
 (defn both-ways [op a b] [(op a b) (op b a)])
 
-(defn combine [fa fb]
-  (->> (for [a fa b fb op [+ - * div]] (both-ways op a b)) (flatten) (distinct) (sort)))
+(defn combine [fa fb] (->> (for [a fa b fb op [+ - * div]] (both-ways op a b)) (flatten) (distinct) (sort)))
 
 (defn four-fours []
   (let [
