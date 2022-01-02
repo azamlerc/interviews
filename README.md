@@ -12,6 +12,7 @@ Fun interview questions in various languages:
 - Objective-C
 - PHP
 - Python
+- R
 - Ruby
 - Swift
 - TypeScript
@@ -50,10 +51,23 @@ Extension: Create a graph network of all names. Count how many clusters of peopl
 Pontifex implements the Solitaire encryption algorithm, as described in the appendix of the book Cryptonomicon by Neal Stephenson. Solitaire is a cypher that can be performed using a deck of playing cards. If two people each have a deck of playing cards in the same order, each can generate a keystream that can be used to encypher and decypher a message.
 
 - Algorithm: https://www.schneier.com/academic/solitaire/
-- Visualization: https://andrewzc.net/wikilinks/
+- Visualization: https://andrewzc.net/pontifex/
 
 ## Wiki Links
 
 What happens when you keep following the first link in Wikipedia articles? You almost always get back to the articles on Existence or Awareness. This program makes an outline of a selection of articles, and how they link back to the same loops. 
 
 - Visualization: https://andrewzc.net/wikilinks/
+
+## Calendar
+
+Write a function that returns a calendar for a given month, in the form of a nested array of numbers.
+
+```
+28 29 30  1  2  3  4
+ 5  6  7  8  9 10 11
+12 13 14 15 16 17 18
+19 20 21 22 23 24 25
+26 27 28 29 30 31  1` 
+```
+
