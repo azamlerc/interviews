@@ -68,6 +68,12 @@ Write a function that returns a calendar for a given month, in the form of a nes
  5  6  7  8  9 10 11
 12 13 14 15 16 17 18
 19 20 21 22 23 24 25
-26 27 28 29 30 31  1` 
+26 27 28 29 30 31  1
 ```
 
+## Hashcash
+
+Hashcash is a cryptographic hash-based proof-of-work algorithm that requires a selectable amount of work to compute, but the proof can be verified efficiently. Write a function that returns a hashcash header.
+
+- Algorithm: https://en.wikipedia.org/wiki/Hashcash
+- Example: `1:20:1303030600:anni@cypherspace.org::McMybZIhxKXu57jd:ckvi`
