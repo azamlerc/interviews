@@ -217,7 +217,6 @@ function makeDate() {
 let zeroPrefix = (bytes: number) =>
   [...Array(Math.floor(bytes / 4))].map((_) => "0").join("");
 
-
 function findCounter(hashcash: Hashcash) {
   let prefix = join(hashcash);
   let zeroes = zeroPrefix(hashcash.bits);
