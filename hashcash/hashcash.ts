@@ -139,17 +139,13 @@ module sha1 {
   }
 }
 
-// BASE64
-
-function bin2String(numbers: number[]): string {
-  return numbers.map((i) => String.fromCharCode(i)).join("");
-}
+// UTILS
 
 const b64ch = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 const b64chs = Array.prototype.slice.call(b64ch);
 
-function btoaPolyfill(bin: string): string {
-    // console.log('polyfilled');
+function base64Encode(numbers: number[]): string {
+    let bin = numbers.map((i) => String.fromCharCode(i)).join("");
     let u32, c0, c1, c2, asc = '';
     const pad = bin.length % 3;
     for (let i = 0; i < bin.length;) {
@@ -166,8 +162,6 @@ function btoaPolyfill(bin: string): string {
     return pad ? asc.slice(0, pad - 3) + "===".substring(pad) : asc;
 };
 
-// UTILS
-
 function byteArray(n: number): number[] {
   let numbers: number[] = [];
   while (n > 255) {
@@ -176,33 +170,6 @@ function byteArray(n: number): number[] {
   }
   numbers.push(n);
   return numbers;
-}
-
-function randomNumbers(count: number): number[] {
-  return [...Array(count)].map((_) => 
-     Math.floor((Math.random() * 256) + 1));
-}
-
-function makeDate() {
-  let today = new Date();
-  let iso = today.toISOString();
-  return iso.substring(2,4) + 
-    iso.substring(5,7) + 
-    iso.substring(8,10) + 
-    iso.substring(11,13) + 
-    iso.substring(14,16);
-}
-
-function makeRand() {
-  return btoaPolyfill(bin2String(randomNumbers(12)));
-}
-
-function encodeNumber(n: number) {
-  return btoaPolyfill(bin2String(byteArray(n)));
-}
-
-function zeroPrefix(bytes: number): string {
-  return [...Array(Math.floor(bytes / 4))].map((_) => "0").join("");
 }
 
 // HASHCASH
@@ -220,14 +187,14 @@ interface Hashcash {
   counter: string;
 }
 
-function join(h: Hashcash, includeCounter: boolean = true): string {
-  let vals = [h.ver, h.bits, h.date, h.resource, h.ext, h.rand, includeCounter ? h.counter : ""];
-  return vals.join(":");
+function join(h: Hashcash): string {
+  return [h.ver, h.bits, h.date, h.resource,
+          h.ext, h.rand, h.counter].join(":");
 }
 
 function parse(value: string): Hashcash {
   let values = value.split(":");
-  let hashcash = {
+  return {
     ver: parseInt(values[0]),
     bits: parseInt(values[1]),
     date: values[2],
@@ -236,15 +203,27 @@ function parse(value: string): Hashcash {
     rand: values[5],
     counter: values[6]
   };
-  return hashcash;
 }
 
+let randomNumbers = (count: number): number[] =>
+  [...Array(count)].map((_) => Math.floor((Math.random() * 256) + 1));
+
+function makeDate() {
+  let today = new Date();
+  let iso = today.toISOString();
+  return [2,5,8,11,14].map((i) => iso.substring(i,i+2)).join("");
+}
+
+let zeroPrefix = (bytes: number) =>
+  [...Array(Math.floor(bytes / 4))].map((_) => "0").join("");
+
+
 function findCounter(hashcash: Hashcash) {
-  let prefix = join(hashcash, false);
+  let prefix = join(hashcash);
   let zeroes = zeroPrefix(hashcash.bits);
   let found = false;
   for (let i = 0; !found; i++) {
-    let counter = encodeNumber(i);
+    let counter = base64Encode(byteArray(i));
     let hash = sha1.hash(prefix + counter);
     if (hash.startsWith(zeroes)) {
       hashcash.counter = counter;
@@ -260,7 +239,7 @@ function generate(resource: string): string {
     date: makeDate(),
     resource,
     ext: "",
-    rand: makeRand(),
+    rand: base64Encode(randomNumbers(12)),
     counter: ""
   };
 
@@ -298,7 +277,7 @@ function validate(value: string, resource: string): boolean {
     console.log("Hash doesn't start with zeroes");
     return false;
   }
-  
+
   return true;
 }
 
