@@ -1,5 +1,3 @@
-
-
 let englishWords = ["A", "ACE", "BAD", "DEAL", "DECK", "ANDREW", "DAN", "VICTORIA"]
 let wordSet = new Set(englishWords);
 
@@ -38,7 +36,6 @@ function findWords(numberString) {
     .filter((word) => word.length == length)
     .filter((word) => wordSet.has(word));
 }
-
 
 console.log(findWords("223"));
 console.log(findWords("3325"));
