@@ -1,8 +1,15 @@
+// This exercise simulates users subscribing to a service.
+// There are 1000 unique users. Every day over the course of
+// a year, new users have a 3% chance of subscribing, while
+// existing users have a 0.5% chance of unsubscribing.
 
-// Pseudorandom nubmer genreator 
-let randval = 123;
+// Given a list of users who have optional start and end dates
+// for their subscription, the assignment is to generate an array
+// with the total number of subscribers on each day of the year.
+
 
 // Generates a pseudorandom number between 0 and 999.
+let randval = 123;
 function rand() {
   randval = randval * 9;
   randval = (randval / 1000) + (randval % 1000);
@@ -11,8 +18,7 @@ function rand() {
 
 // Takes a chance, and returns true with the given probability.
 function chance(probability) {
-  let n = rand();
-  return n < (1000.0 * probability);
+  return rand() < (1000.0 * probability);
 }
 
 let users = [...Array(1000).keys()].map(i => ({
@@ -23,8 +29,7 @@ let users = [...Array(1000).keys()].map(i => ({
 }));
 
 let dailyTotals = [];
-
-var date = new Date(2022, 0, 1);
+let date = new Date(2022, 0, 1);
 while (date.getFullYear() == 2022) {
   for (let user of users) {
     if (user.active) {
