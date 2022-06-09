@@ -3,10 +3,12 @@
 // a year, new users have a 3% chance of subscribing, while
 // existing users have a 0.5% chance of unsubscribing.
 
+let subscribeRate = 0.03;
+let unsubscribeRate = 0.005;
+
 // Given a list of users who have optional start and end dates
 // for their subscription, the assignment is to generate an array
 // with the total number of subscribers on each day of the year.
-
 
 // Generates a pseudorandom number between 0 and 999.
 let randval = 123;
@@ -33,12 +35,12 @@ let date = new Date(2022, 0, 1);
 while (date.getFullYear() == 2022) {
   for (let user of users) {
     if (user.active) {
-      if (chance(0.005)) {
+      if (chance(unsubscribeRate)) {
         user.active = false;
         user.end = date.getTime();
       }
     } else {
-      if (!user.start && chance(0.03)) {
+      if (!user.start && chance(subscribeRate)) {
         user.active = true;
         user.start = date.getTime();
       }
